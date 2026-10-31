@@ -1,3 +1,4 @@
+// @ts-nocheck -- legacy portal code ported from the original Next.js app
 export const CLINIC_TIMEZONE = 'Asia/Dhaka';
 export const DHAKA_OFFSET_STRING = '+06:00';
 

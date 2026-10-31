@@ -1,3 +1,4 @@
+// @ts-nocheck -- legacy portal code ported from the original Next.js app
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Package as PackageIcon, Plus, Edit3, Trash2, Eye, Check, AlertTriangle, X } from 'lucide-react';

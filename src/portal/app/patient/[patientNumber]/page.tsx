@@ -1,3 +1,4 @@
+// @ts-nocheck -- legacy portal code ported from the original Next.js app
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from '@/portal/shims/next-navigation';

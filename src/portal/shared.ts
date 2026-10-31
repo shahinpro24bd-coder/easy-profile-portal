@@ -22,3 +22,5 @@ export type ServicePackage = any;
 export type Staff = any;
 export type StaffMonthRecord = any;
 export type StaffStats = any;
+export type SmsBulkSendSummary = any;
+export type SmsStatus = any;

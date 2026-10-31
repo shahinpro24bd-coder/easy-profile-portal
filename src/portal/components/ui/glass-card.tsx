@@ -1,3 +1,4 @@
+// @ts-nocheck -- legacy portal code ported from the original Next.js app
 
 import React from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';

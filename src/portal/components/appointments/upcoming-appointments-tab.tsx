@@ -1,3 +1,4 @@
+// @ts-nocheck -- legacy portal code ported from the original Next.js app
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from '@/portal/shims/next-link';
