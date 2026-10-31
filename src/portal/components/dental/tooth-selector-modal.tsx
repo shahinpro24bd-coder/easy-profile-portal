@@ -227,6 +227,24 @@ export function ToothSelector({
     );
   };
 
+  const renderPalmerNum = (tooth: ToothItem) => {
+    const active = isSelected(tooth);
+    return (
+      <button
+        key={tooth.id}
+        type="button"
+        onClick={() => toggleTooth(tooth)}
+        title={`${tooth.name} (FDI #${tooth.id})`}
+        style={{ width: 34, height: 40, fontSize: 22 }}
+        className={`flex items-center justify-center rounded-lg font-medium transition-all duration-150 cursor-pointer ${
+          active ? 'bg-red-600 text-white shadow-glow-red-sm' : 'text-gray-200 hover:bg-white/10 hover:text-white'
+        }`}
+      >
+        {tooth.num}
+      </button>
+    );
+  };
+
   return (
     <div className={`space-y-3.5 ${className}`}>
 
@@ -237,7 +255,7 @@ export function ToothSelector({
             Tooth Chart:
           </span>
           <span className="text-[10px] text-gray-400 font-mono">
-            1 2 3 4 5 6 7 8 | 8 7 6 5 4 3 2 1
+            8 7 6 5 4 3 2 1 | 1 2 3 4 5 6 7 8
           </span>
         </div>
 
@@ -301,39 +319,30 @@ export function ToothSelector({
         </div>
       </div>
 
-      <div className="p-3 sm:p-4 rounded-2xl bg-black/40 border border-white/10 space-y-3">
-
-        <div className="space-y-1.5">
-          <div className="flex justify-between items-center text-[10px] font-bold text-red-400 uppercase tracking-wider px-1">
-            <span>Upper Right (UR 8 → 1)</span>
-            <span className="text-gray-400 font-extrabold text-[9px] sm:text-[10px]">UPPER JAW (MAXILLA)</span>
-            <span>Upper Left (UL 1 → 8)</span>
-          </div>
-
-          <div className="grid grid-cols-8 sm:grid-cols-16 gap-1 sm:gap-1.5">
-            {UPPER_RIGHT_TEETH.map((tooth) => renderToothButton(tooth, true))}
-            {UPPER_LEFT_TEETH.map((tooth) => renderToothButton(tooth, true))}
-          </div>
+      <div className="p-3 sm:p-4 rounded-2xl bg-black/40 border border-white/10 overflow-x-auto">
+        <div className="flex justify-between text-[10px] font-bold text-red-400 uppercase tracking-wider px-1 mb-2" style={{ minWidth: 560 }}>
+          <span>ডান · Right</span>
+          <span className="text-gray-400">উপরের পাটি · Upper</span>
+          <span>বাম · Left</span>
         </div>
-
-        <div className="relative flex items-center justify-center my-1">
-          <div className="w-full border-t border-dashed border-white/20"></div>
-          <span className="absolute bg-[#121316] px-3 py-0.5 rounded-full border border-white/10 text-[9px] text-gray-400 uppercase tracking-widest font-mono font-bold">
-            Dental Midline
-          </span>
+        <div className="mx-auto" style={{ width: 'max-content' }}>
+          {[
+            { right: UPPER_RIGHT_TEETH, left: UPPER_LEFT_TEETH, upper: true },
+            { right: LOWER_RIGHT_TEETH, left: LOWER_LEFT_TEETH, upper: false },
+          ].map((row) => (
+            <div
+              key={row.upper ? 'u' : 'l'}
+              className="flex items-stretch"
+              style={row.upper ? { borderBottom: '2px solid rgba(255,255,255,0.45)' } : undefined}
+            >
+              <div className="flex">{row.right.map((t) => renderPalmerNum(t))}</div>
+              <div style={{ width: 2, background: 'rgba(255,255,255,0.45)' }} />
+              <div className="flex">{row.left.map((t) => renderPalmerNum(t))}</div>
+            </div>
+          ))}
         </div>
-
-        <div className="space-y-1.5">
-          <div className="flex justify-between items-center text-[10px] font-bold text-red-400 uppercase tracking-wider px-1">
-            <span>Lower Right (LR 8 → 1)</span>
-            <span className="text-gray-400 font-extrabold text-[9px] sm:text-[10px]">LOWER JAW (MANDIBLE)</span>
-            <span>Lower Left (LL 1 → 8)</span>
-          </div>
-
-          <div className="grid grid-cols-8 sm:grid-cols-16 gap-1 sm:gap-1.5">
-            {LOWER_RIGHT_TEETH.map((tooth) => renderToothButton(tooth, false))}
-            {LOWER_LEFT_TEETH.map((tooth) => renderToothButton(tooth, false))}
-          </div>
+        <div className="flex justify-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-2">
+          নিচের পাটি · Lower
         </div>
       </div>
 
@@ -450,7 +459,7 @@ export function ToothSelectorModal({
                 Dental Tooth Selector
               </h2>
               <span className="px-2 py-0.5 rounded-full bg-red-600/20 border border-red-500/40 text-red-400 text-[10px] font-mono font-bold">
-                1 2 3 4 5 6 7 8 | 8 7 6 5 4 3 2 1
+                8 7 6 5 4 3 2 1 | 1 2 3 4 5 6 7 8
               </span>
             </div>
             <p className="text-xs text-gray-400 mt-0.5">
