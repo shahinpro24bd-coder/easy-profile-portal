@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMemo } from 'react';
+import { PatientFinder } from '@/portal/components/layout/patient-finder';
 import Link from '@/portal/shims/next-link';
 import { useRouter } from '@/portal/shims/next-navigation';
 import {
@@ -161,20 +162,12 @@ export default function PatientsPage() {
           </Link>
         </div>
 
-        <div className="relative max-w-md w-full">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Search by name, phone (01...), or patient #..."
-            className="w-full glass-input text-sm rounded-xl pl-10 pr-4 py-2.5 text-gray-200 placeholder:text-gray-500"
-            aria-label="Search patients"
-          />
-        </div>
+        <PatientFinder
+          className="max-w-md w-full"
+          inputClassName="text-sm"
+          placeholder="নামের ১-২ অক্ষর / ফোন / নম্বর লিখুন..."
+          onQueryChange={(v) => { setSearch(v); setPage(1); }}
+        />
 
         <GlassCard className="p-4 sm:p-5 space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

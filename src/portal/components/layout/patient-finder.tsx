@@ -6,7 +6,7 @@ import { apiFetch } from '@/portal/lib/api/client';
 type Found = { patientNumber: string | number; fullName?: string; phone?: string };
 
 /** Type a name, phone or patient number and jump straight to that patient's profile. */
-export const PatientFinder: React.FC<{ className?: string }> = ({ className = '' }) => {
+export const PatientFinder: React.FC<{ className?: string; inputClassName?: string; placeholder?: string; onQueryChange?: (q: string) => void }> = ({ className = '', inputClassName = 'text-xs', placeholder, onQueryChange }) => {
   const router = useRouter();
   const [q, setQ] = useState('');
   const [open, setOpen] = useState(false);
@@ -58,6 +58,7 @@ export const PatientFinder: React.FC<{ className?: string }> = ({ className = ''
         value={q}
         onChange={(e) => {
           setQ(e.target.value);
+          onQueryChange?.(e.target.value);
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
@@ -67,12 +68,12 @@ export const PatientFinder: React.FC<{ className?: string }> = ({ className = ''
           if (e.key === 'Enter' && results[active]) go(results[active]);
           if (e.key === 'Escape') setOpen(false);
         }}
-        placeholder="Patient Lookup — নাম / ফোন / নম্বর লিখুন"
+        placeholder={placeholder || "Patient Lookup — নাম / ফোন / নম্বর লিখুন"}
         aria-label="Find a patient by name, phone or number"
-        className="w-full glass-input text-xs rounded-xl pl-10 pr-4 py-2.5 text-gray-200 placeholder:text-gray-500"
+        className={`w-full glass-input ${inputClassName} rounded-xl pl-10 pr-4 py-2.5 text-gray-200 placeholder:text-gray-500`}
       />
       {open && q.trim() && (
-        <div className="absolute left-0 right-0 mt-2 z-50 rounded-xl border border-white/10 shadow-glass overflow-hidden" style={{ background: 'var(--sidebar-bg)' }}>
+        <div className="absolute left-0 right-0 top-full mt-1 z-50 rounded-xl border border-white/10 shadow-glass overflow-hidden" style={{ background: 'var(--sidebar-bg)' }}>
           {loading ? (
             <div className="flex items-center gap-2 px-4 py-3 text-xs text-gray-400">
               <Loader2 className="w-4 h-4 animate-spin" /> খোঁজা হচ্ছে...
