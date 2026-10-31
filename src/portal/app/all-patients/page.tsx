@@ -139,6 +139,29 @@ export default function DailyPatientsPage() {
         return;
       }
       showToast(editingEntry ? 'Daily patient updated successfully.' : 'Daily patient added to queue.', 'success');
+
+      // Also keep a permanent profile in "সব রোগী" (create one if this phone isn't registered yet)
+      if (!editingEntry && form.phone.trim() && form.patientName.trim()) {
+        try {
+          const phone = form.phone.trim();
+          const check = await apiFetch<any>(`/patients/check-phone/${encodeURIComponent(phone.replace(/\D/g, ''))}`);
+          const exists = check.success && check.data?.exists;
+          if (!exists) {
+            const created = await apiFetch<any>('/patients', {
+              method: 'POST',
+              body: JSON.stringify({
+                fullName: form.patientName.trim(),
+                age: Number(form.age) || 0,
+                phone,
+                village: form.location.trim() || undefined,
+                patientProblem: form.treatment.trim() || form.notes.trim() || 'Daily visit'
+              })
+            });
+            if (created.success) showToast('স্থায়ী প্রোফাইলও তৈরি হয়েছে (Saved to All Patients)', 'success');
+            else showToast('প্রোফাইল তৈরি হয়নি: ' + (created.error || 'error'), 'error');
+          }
+        } catch { /* ignore */ }
+      }
       setIsModalOpen(false);
       if (form.date !== selectedDate) {
         setSelectedDate(form.date);
