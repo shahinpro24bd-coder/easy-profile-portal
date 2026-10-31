@@ -10,33 +10,326 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccessoriesRouteImport } from './routes/accessories'
+import { Route as AllPatientsRouteImport } from './routes/all-patients'
+import { Route as AppointmentsRouteImport } from './routes/appointments'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PackagesRouteImport } from './routes/packages'
+import { Route as ReceiptsRouteImport } from './routes/receipts'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SmsapiRouteImport } from './routes/smsapi'
+import { Route as SmsinfoRouteImport } from './routes/smsinfo'
+import { Route as StaffRouteImport } from './routes/staff'
+import { Route as ApiSplatRouteImport } from './routes/api/$'
+import { Route as PatientPatientNumberRouteImport } from './routes/patient.$patientNumber'
+import { Route as PatientNewRouteImport } from './routes/patient.new'
+import { Route as PatientsIndexRouteImport } from './routes/patients.index'
+import { Route as PatientsNewRouteImport } from './routes/patients.new'
+import { Route as StuffsIndexRouteImport } from './routes/stuffs.index'
+import { Route as StuffsIdRouteImport } from './routes/stuffs.$id'
+import { Route as PatientsPatientNumberIndexRouteImport } from './routes/patients.$patientNumber.index'
+import { Route as PublicPatientTokenRouteImport } from './routes/public.patient.$token'
+import { Route as PatientsPatientNumberReceiptIndexRouteImport } from './routes/patients.$patientNumber.receipt.index'
+import { Route as PatientsPatientNumberReceiptNewRouteImport } from './routes/patients.$patientNumber.receipt.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccessoriesRoute = AccessoriesRouteImport.update({
+  id: '/accessories',
+  path: '/accessories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AllPatientsRoute = AllPatientsRouteImport.update({
+  id: '/all-patients',
+  path: '/all-patients',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppointmentsRoute = AppointmentsRouteImport.update({
+  id: '/appointments',
+  path: '/appointments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PackagesRoute = PackagesRouteImport.update({
+  id: '/packages',
+  path: '/packages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReceiptsRoute = ReceiptsRouteImport.update({
+  id: '/receipts',
+  path: '/receipts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SmsapiRoute = SmsapiRouteImport.update({
+  id: '/smsapi',
+  path: '/smsapi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SmsinfoRoute = SmsinfoRouteImport.update({
+  id: '/smsinfo',
+  path: '/smsinfo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StaffRoute = StaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSplatRoute = ApiSplatRouteImport.update({
+  id: '/api/$',
+  path: '/api/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientPatientNumberRoute = PatientPatientNumberRouteImport.update({
+  id: '/patient/$patientNumber',
+  path: '/patient/$patientNumber',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientNewRoute = PatientNewRouteImport.update({
+  id: '/patient/new',
+  path: '/patient/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientsIndexRoute = PatientsIndexRouteImport.update({
+  id: '/patients/',
+  path: '/patients/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientsNewRoute = PatientsNewRouteImport.update({
+  id: '/patients/new',
+  path: '/patients/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StuffsIndexRoute = StuffsIndexRouteImport.update({
+  id: '/stuffs/',
+  path: '/stuffs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StuffsIdRoute = StuffsIdRouteImport.update({
+  id: '/stuffs/$id',
+  path: '/stuffs/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientsPatientNumberIndexRoute =
+  PatientsPatientNumberIndexRouteImport.update({
+    id: '/patients/$patientNumber/',
+    path: '/patients/$patientNumber/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const PublicPatientTokenRoute = PublicPatientTokenRouteImport.update({
+  id: '/public/patient/$token',
+  path: '/public/patient/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientsPatientNumberReceiptIndexRoute =
+  PatientsPatientNumberReceiptIndexRouteImport.update({
+    id: '/patients/$patientNumber/receipt/',
+    path: '/patients/$patientNumber/receipt/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const PatientsPatientNumberReceiptNewRoute =
+  PatientsPatientNumberReceiptNewRouteImport.update({
+    id: '/patients/$patientNumber/receipt/new',
+    path: '/patients/$patientNumber/receipt/new',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/accessories': typeof AccessoriesRoute
+  '/all-patients': typeof AllPatientsRoute
+  '/appointments': typeof AppointmentsRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/packages': typeof PackagesRoute
+  '/receipts': typeof ReceiptsRoute
+  '/settings': typeof SettingsRoute
+  '/smsapi': typeof SmsapiRoute
+  '/smsinfo': typeof SmsinfoRoute
+  '/staff': typeof StaffRoute
+  '/api/$': typeof ApiSplatRoute
+  '/patient/$patientNumber': typeof PatientPatientNumberRoute
+  '/patient/new': typeof PatientNewRoute
+  '/patients/new': typeof PatientsNewRoute
+  '/stuffs/$id': typeof StuffsIdRoute
+  '/patients/': typeof PatientsIndexRoute
+  '/stuffs/': typeof StuffsIndexRoute
+  '/public/patient/$token': typeof PublicPatientTokenRoute
+  '/patients/$patientNumber/': typeof PatientsPatientNumberIndexRoute
+  '/patients/$patientNumber/receipt/new': typeof PatientsPatientNumberReceiptNewRoute
+  '/patients/$patientNumber/receipt/': typeof PatientsPatientNumberReceiptIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/accessories': typeof AccessoriesRoute
+  '/all-patients': typeof AllPatientsRoute
+  '/appointments': typeof AppointmentsRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/packages': typeof PackagesRoute
+  '/receipts': typeof ReceiptsRoute
+  '/settings': typeof SettingsRoute
+  '/smsapi': typeof SmsapiRoute
+  '/smsinfo': typeof SmsinfoRoute
+  '/staff': typeof StaffRoute
+  '/api/$': typeof ApiSplatRoute
+  '/patient/$patientNumber': typeof PatientPatientNumberRoute
+  '/patient/new': typeof PatientNewRoute
+  '/patients/new': typeof PatientsNewRoute
+  '/stuffs/$id': typeof StuffsIdRoute
+  '/patients': typeof PatientsIndexRoute
+  '/stuffs': typeof StuffsIndexRoute
+  '/public/patient/$token': typeof PublicPatientTokenRoute
+  '/patients/$patientNumber': typeof PatientsPatientNumberIndexRoute
+  '/patients/$patientNumber/receipt/new': typeof PatientsPatientNumberReceiptNewRoute
+  '/patients/$patientNumber/receipt': typeof PatientsPatientNumberReceiptIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/accessories': typeof AccessoriesRoute
+  '/all-patients': typeof AllPatientsRoute
+  '/appointments': typeof AppointmentsRoute
+  '/dashboard': typeof DashboardRoute
+  '/login': typeof LoginRoute
+  '/packages': typeof PackagesRoute
+  '/receipts': typeof ReceiptsRoute
+  '/settings': typeof SettingsRoute
+  '/smsapi': typeof SmsapiRoute
+  '/smsinfo': typeof SmsinfoRoute
+  '/staff': typeof StaffRoute
+  '/api/$': typeof ApiSplatRoute
+  '/patient/$patientNumber': typeof PatientPatientNumberRoute
+  '/patient/new': typeof PatientNewRoute
+  '/patients/new': typeof PatientsNewRoute
+  '/stuffs/$id': typeof StuffsIdRoute
+  '/patients/': typeof PatientsIndexRoute
+  '/stuffs/': typeof StuffsIndexRoute
+  '/public/patient/$token': typeof PublicPatientTokenRoute
+  '/patients/$patientNumber/': typeof PatientsPatientNumberIndexRoute
+  '/patients/$patientNumber/receipt/new': typeof PatientsPatientNumberReceiptNewRoute
+  '/patients/$patientNumber/receipt/': typeof PatientsPatientNumberReceiptIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/accessories'
+    | '/all-patients'
+    | '/appointments'
+    | '/dashboard'
+    | '/login'
+    | '/packages'
+    | '/receipts'
+    | '/settings'
+    | '/smsapi'
+    | '/smsinfo'
+    | '/staff'
+    | '/api/$'
+    | '/patient/$patientNumber'
+    | '/patient/new'
+    | '/patients/new'
+    | '/stuffs/$id'
+    | '/patients/'
+    | '/stuffs/'
+    | '/public/patient/$token'
+    | '/patients/$patientNumber/'
+    | '/patients/$patientNumber/receipt/new'
+    | '/patients/$patientNumber/receipt/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/accessories'
+    | '/all-patients'
+    | '/appointments'
+    | '/dashboard'
+    | '/login'
+    | '/packages'
+    | '/receipts'
+    | '/settings'
+    | '/smsapi'
+    | '/smsinfo'
+    | '/staff'
+    | '/api/$'
+    | '/patient/$patientNumber'
+    | '/patient/new'
+    | '/patients/new'
+    | '/stuffs/$id'
+    | '/patients'
+    | '/stuffs'
+    | '/public/patient/$token'
+    | '/patients/$patientNumber'
+    | '/patients/$patientNumber/receipt/new'
+    | '/patients/$patientNumber/receipt'
+  id:
+    | '__root__'
+    | '/'
+    | '/accessories'
+    | '/all-patients'
+    | '/appointments'
+    | '/dashboard'
+    | '/login'
+    | '/packages'
+    | '/receipts'
+    | '/settings'
+    | '/smsapi'
+    | '/smsinfo'
+    | '/staff'
+    | '/api/$'
+    | '/patient/$patientNumber'
+    | '/patient/new'
+    | '/patients/new'
+    | '/stuffs/$id'
+    | '/patients/'
+    | '/stuffs/'
+    | '/public/patient/$token'
+    | '/patients/$patientNumber/'
+    | '/patients/$patientNumber/receipt/new'
+    | '/patients/$patientNumber/receipt/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccessoriesRoute: typeof AccessoriesRoute
+  AllPatientsRoute: typeof AllPatientsRoute
+  AppointmentsRoute: typeof AppointmentsRoute
+  DashboardRoute: typeof DashboardRoute
+  LoginRoute: typeof LoginRoute
+  PackagesRoute: typeof PackagesRoute
+  ReceiptsRoute: typeof ReceiptsRoute
+  SettingsRoute: typeof SettingsRoute
+  SmsapiRoute: typeof SmsapiRoute
+  SmsinfoRoute: typeof SmsinfoRoute
+  StaffRoute: typeof StaffRoute
+  ApiSplatRoute: typeof ApiSplatRoute
+  PatientPatientNumberRoute: typeof PatientPatientNumberRoute
+  PatientNewRoute: typeof PatientNewRoute
+  PatientsNewRoute: typeof PatientsNewRoute
+  StuffsIdRoute: typeof StuffsIdRoute
+  PatientsIndexRoute: typeof PatientsIndexRoute
+  StuffsIndexRoute: typeof StuffsIndexRoute
+  PublicPatientTokenRoute: typeof PublicPatientTokenRoute
+  PatientsPatientNumberIndexRoute: typeof PatientsPatientNumberIndexRoute
+  PatientsPatientNumberReceiptNewRoute: typeof PatientsPatientNumberReceiptNewRoute
+  PatientsPatientNumberReceiptIndexRoute: typeof PatientsPatientNumberReceiptIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +341,188 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/accessories': {
+      id: '/accessories'
+      path: '/accessories'
+      fullPath: '/accessories'
+      preLoaderRoute: typeof AccessoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/all-patients': {
+      id: '/all-patients'
+      path: '/all-patients'
+      fullPath: '/all-patients'
+      preLoaderRoute: typeof AllPatientsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/appointments': {
+      id: '/appointments'
+      path: '/appointments'
+      fullPath: '/appointments'
+      preLoaderRoute: typeof AppointmentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/packages': {
+      id: '/packages'
+      path: '/packages'
+      fullPath: '/packages'
+      preLoaderRoute: typeof PackagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/receipts': {
+      id: '/receipts'
+      path: '/receipts'
+      fullPath: '/receipts'
+      preLoaderRoute: typeof ReceiptsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/smsapi': {
+      id: '/smsapi'
+      path: '/smsapi'
+      fullPath: '/smsapi'
+      preLoaderRoute: typeof SmsapiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/smsinfo': {
+      id: '/smsinfo'
+      path: '/smsinfo'
+      fullPath: '/smsinfo'
+      preLoaderRoute: typeof SmsinfoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/$': {
+      id: '/api/$'
+      path: '/api/$'
+      fullPath: '/api/$'
+      preLoaderRoute: typeof ApiSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patient/$patientNumber': {
+      id: '/patient/$patientNumber'
+      path: '/patient/$patientNumber'
+      fullPath: '/patient/$patientNumber'
+      preLoaderRoute: typeof PatientPatientNumberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patient/new': {
+      id: '/patient/new'
+      path: '/patient/new'
+      fullPath: '/patient/new'
+      preLoaderRoute: typeof PatientNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patients/': {
+      id: '/patients/'
+      path: '/patients'
+      fullPath: '/patients/'
+      preLoaderRoute: typeof PatientsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patients/new': {
+      id: '/patients/new'
+      path: '/patients/new'
+      fullPath: '/patients/new'
+      preLoaderRoute: typeof PatientsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stuffs/': {
+      id: '/stuffs/'
+      path: '/stuffs'
+      fullPath: '/stuffs/'
+      preLoaderRoute: typeof StuffsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stuffs/$id': {
+      id: '/stuffs/$id'
+      path: '/stuffs/$id'
+      fullPath: '/stuffs/$id'
+      preLoaderRoute: typeof StuffsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patients/$patientNumber/': {
+      id: '/patients/$patientNumber/'
+      path: '/patients/$patientNumber'
+      fullPath: '/patients/$patientNumber/'
+      preLoaderRoute: typeof PatientsPatientNumberIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/public/patient/$token': {
+      id: '/public/patient/$token'
+      path: '/public/patient/$token'
+      fullPath: '/public/patient/$token'
+      preLoaderRoute: typeof PublicPatientTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patients/$patientNumber/receipt/': {
+      id: '/patients/$patientNumber/receipt/'
+      path: '/patients/$patientNumber/receipt'
+      fullPath: '/patients/$patientNumber/receipt/'
+      preLoaderRoute: typeof PatientsPatientNumberReceiptIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patients/$patientNumber/receipt/new': {
+      id: '/patients/$patientNumber/receipt/new'
+      path: '/patients/$patientNumber/receipt/new'
+      fullPath: '/patients/$patientNumber/receipt/new'
+      preLoaderRoute: typeof PatientsPatientNumberReceiptNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccessoriesRoute: AccessoriesRoute,
+  AllPatientsRoute: AllPatientsRoute,
+  AppointmentsRoute: AppointmentsRoute,
+  DashboardRoute: DashboardRoute,
+  LoginRoute: LoginRoute,
+  PackagesRoute: PackagesRoute,
+  ReceiptsRoute: ReceiptsRoute,
+  SettingsRoute: SettingsRoute,
+  SmsapiRoute: SmsapiRoute,
+  SmsinfoRoute: SmsinfoRoute,
+  StaffRoute: StaffRoute,
+  ApiSplatRoute: ApiSplatRoute,
+  PatientPatientNumberRoute: PatientPatientNumberRoute,
+  PatientNewRoute: PatientNewRoute,
+  PatientsNewRoute: PatientsNewRoute,
+  StuffsIdRoute: StuffsIdRoute,
+  PatientsIndexRoute: PatientsIndexRoute,
+  StuffsIndexRoute: StuffsIndexRoute,
+  PublicPatientTokenRoute: PublicPatientTokenRoute,
+  PatientsPatientNumberIndexRoute: PatientsPatientNumberIndexRoute,
+  PatientsPatientNumberReceiptNewRoute: PatientsPatientNumberReceiptNewRoute,
+  PatientsPatientNumberReceiptIndexRoute:
+    PatientsPatientNumberReceiptIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
