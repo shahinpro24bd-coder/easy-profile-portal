@@ -25,5 +25,5 @@ export function useSearchParams() {
 }
 
 export function useParams<T = Record<string, string>>() {
-  return useTsParams({ strict: false }) as T;
+  return useTsParams({ strict: false } as never) as T;
 }

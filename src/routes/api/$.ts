@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 const DEFAULT_BACKEND = "https://api.luckydentalcare.com";
 
 async function proxy({ request, params }: { request: Request; params: { _splat?: string } }) {
-  const base = (process.env.BACKEND_URL || DEFAULT_BACKEND).replace(/\/$/, "");
+  const base = (process.env["BACKEND_URL"] || DEFAULT_BACKEND).replace(/\/$/, "");
   const apiBase = base.endsWith("/api") ? base : `${base}/api`;
   const incoming = new URL(request.url);
   const target = `${apiBase}/${params._splat ?? ""}${incoming.search}`;
@@ -16,7 +16,7 @@ async function proxy({ request, params }: { request: Request; params: { _splat?:
   const res = await fetch(target, {
     method: request.method,
     headers,
-    body: hasBody ? await request.arrayBuffer() : undefined,
+    body: hasBody ? await request.arrayBuffer() : null,
     redirect: "manual",
   });
 
