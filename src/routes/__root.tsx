@@ -9,6 +9,12 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { ClientOnly } from "@tanstack/react-router";
+import { AuthProvider } from "@/portal/lib/auth/auth-context";
+import { ThemeProvider } from "@/portal/lib/theme/theme-context";
+import { ToastProvider } from "@/portal/components/ui/toast";
+import { MaintenanceGuard } from "@/portal/components/maintain/maintenance-guard";
+import { LoadingSpinner } from "@/portal/components/ui/loading-spinner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -78,21 +84,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Luckydental — Dental Management System" },
+      { name: "description", content: "Private system for patients, appointments, packages and receipts at Luckydental." },
+      { property: "og:title", content: "Luckydental — Dental Management System" },
+      { property: "og:description", content: "Private system for patients, appointments, packages and receipts at Luckydental." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/icon.svg", type: "image/svg+xml" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -103,11 +109,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="antialiased selection:bg-red-900 selection:text-white">
         {children}
         <Scripts />
       </body>
@@ -121,7 +127,17 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <ClientOnly fallback={<LoadingSpinner fullScreen label="Loading..." />}>
+        <ThemeProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <MaintenanceGuard>
+                <Outlet />
+              </MaintenanceGuard>
+            </ToastProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </ClientOnly>
     </QueryClientProvider>
   );
 }

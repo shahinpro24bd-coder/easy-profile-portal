@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Page from "@/portal/app/smsinfo/page";
+import Page from "@/portal/app/smsapi/page";
 
 export const Route = createFileRoute("/smsinfo")({
   head: () => ({
