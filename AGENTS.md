@@ -14,3 +14,5 @@
 - `next/link` and `next/navigation` are replaced by shims in `src/portal/shims/`. Why: the legacy pages keep their original imports' API.
 - All `/api/*` calls go through `src/routes/api/$.ts`, which proxies to the clinic's existing backend (`BACKEND_URL`, default api.luckydentalcare.com). Why: backend source was not provided, so live data stays on it.
 - The app renders client-only inside `ClientOnly` in `__root.tsx`. Why: the legacy pages read localStorage during render/auth.
+- Portal styling uses the original Tailwind v3 config in `portal-styles/`, compiled to `public/legacy/portal.css` (linked in `__root.tsx`); `src/styles.css` must not import Tailwind v4. After adding/changing classes, regenerate per `portal-styles/README.md`. Why: v4 renders the legacy classes differently and broke the original look.
+- `/dashboard` route must wrap its page in `DashboardLayout`. Why: Next.js applied `app/dashboard/layout.tsx` implicitly.
