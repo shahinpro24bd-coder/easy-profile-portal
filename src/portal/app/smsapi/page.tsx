@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import Link from 'next/link';
+import Link from '@/portal/shims/next-link';
 import {
   Terminal,
   Key,

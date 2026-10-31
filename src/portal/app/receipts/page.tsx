@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
+import Link from '@/portal/shims/next-link';
 import {
   Receipt as ReceiptIcon,
   Search,
@@ -19,7 +19,7 @@ import { Button } from '@/portal/components/ui/button';
 import { Modal } from '@/portal/components/ui/modal';
 import { apiFetch } from '@/portal/lib/api/client';
 import { ReceiptDocument } from '@/portal/components/receipt/receipt-document';
-import { Receipt } from '@patient-portal/shared';
+import { Receipt } from '@/portal/shared';
 
 export default function ReceiptsPage() {
   const [receipts, setReceipts] = useState<Receipt[]>([]);

@@ -1,8 +1,8 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
+import Link from '@/portal/shims/next-link';
 import { Bell, CalendarDays, Clock3, Phone, X, AlertCircle, Clock } from 'lucide-react';
-import { Appointment } from '@patient-portal/shared';
+import { Appointment } from '@/portal/shared';
 import { apiFetch } from '@/portal/lib/api/client';
 import { formatDhakaDisplayDate, getDhakaDateString, parseAppointmentDateTime } from '@/portal/lib/utils/date-time';
 

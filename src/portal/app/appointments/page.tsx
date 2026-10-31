@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import Link from 'next/link';
+import Link from '@/portal/shims/next-link';
 import {
   Calendar as CalendarIcon,
   Plus,
@@ -37,7 +37,7 @@ import {
   ServicePackage,
   SmsBulkSendSummary,
   SmsStatus
-} from '@patient-portal/shared';
+} from '@/portal/shared';
 import {
   getDhakaDateString,
   getDhakaTomorrowString,

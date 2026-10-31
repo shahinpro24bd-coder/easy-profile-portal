@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/portal/shims/next-navigation';
 import { motion } from 'framer-motion';
 import { Lock, Mail, Eye, EyeOff, Shield } from 'lucide-react';
 import { useAuth } from '@/portal/lib/auth/auth-context';

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import Link from '@/portal/shims/next-link';
 import {
   Building2,
   Layers,
@@ -29,7 +29,7 @@ import { Modal } from '@/portal/components/ui/modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { useTheme } from '@/portal/lib/theme/theme-context';
 import { apiFetch } from '@/portal/lib/api/client';
-import { CustomFieldDefinition, CustomFieldType, ClinicSettings } from '@patient-portal/shared';
+import { CustomFieldDefinition, CustomFieldType, ClinicSettings } from '@/portal/shared';
 
 export default function SettingsPage() {
   const { showToast } = useToast();

@@ -5,7 +5,7 @@ import {
   Edit3,
   ShieldCheck
 } from 'lucide-react';
-import { Receipt, Appointment, ClinicSettings, Patient } from '@patient-portal/shared';
+import { Receipt, Appointment, ClinicSettings, Patient } from '@/portal/shared';
 import { Button } from '@/portal/components/ui/button';
 import { apiFetch } from '@/portal/lib/api/client';
 

@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMemo } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link from '@/portal/shims/next-link';
+import { useRouter } from '@/portal/shims/next-navigation';
 import {
   Users,
   Plus,
@@ -28,7 +28,7 @@ import { EmptyState } from '@/portal/components/ui/empty-state';
 import { Modal } from '@/portal/components/ui/modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { apiFetch } from '@/portal/lib/api/client';
-import { Patient, ImageMetadata, Appointment } from '@patient-portal/shared';
+import { Patient, ImageMetadata, Appointment } from '@/portal/shared';
 import { formatDhakaDisplayDate, getDhakaDateString, parseAppointmentDateTime } from '@/portal/lib/utils/date-time';
 
 export default function PatientsPage() {

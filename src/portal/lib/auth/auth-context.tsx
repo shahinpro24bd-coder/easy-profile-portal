@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { AdminUser } from '@patient-portal/shared';
+import { AdminUser } from '@/portal/shared';
 import { apiFetch } from '../api/client';
 
 interface AuthContextType {

@@ -1,7 +1,7 @@
 
 import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from '@/portal/shims/next-link';
+import { usePathname } from '@/portal/shims/next-navigation';
 import {
   LayoutDashboard,
   Users,

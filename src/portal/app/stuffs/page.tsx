@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
+import Link from '@/portal/shims/next-link';
 import {
   Users,
   Plus,
@@ -26,7 +26,7 @@ import { Input } from '@/portal/components/ui/input';
 import { Modal } from '@/portal/components/ui/modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { apiFetch } from '@/portal/lib/api/client';
-import { Staff, StaffStats, PaymentMethod } from '@patient-portal/shared';
+import { Staff, StaffStats, PaymentMethod } from '@/portal/shared';
 
 const CLINICAL_ROLES = [
   'Dentist',

@@ -26,7 +26,7 @@ import { Input } from '@/portal/components/ui/input';
 import { Modal } from '@/portal/components/ui/modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { apiFetch } from '@/portal/lib/api/client';
-import { Accessory, AccessoryStats, PaymentMethod } from '@patient-portal/shared';
+import { Accessory, AccessoryStats, PaymentMethod } from '@/portal/shared';
 
 const CATEGORIES = [
   { value: 'all', label: 'All Categories' },

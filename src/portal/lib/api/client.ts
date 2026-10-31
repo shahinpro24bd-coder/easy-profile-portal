@@ -1,20 +1,5 @@
 
-const getBaseUrl = (): string => {
-  if (typeof window !== 'undefined') {
-    return '/api';
-  }
-
-  const defaultBackendUrl = process.env.NODE_ENV === 'production'
-    ? 'https://api.luckydentalcare.com'
-    : 'http://localhost:5000';
-  const raw =
-    process.env.NEXT_PUBLIC_BACKEND_API_URL ||
-    process.env.BACKEND_URL ||
-    process.env.NEXT_PUBLIC_API_URL ||
-    defaultBackendUrl;
-  const clean = raw.replace(/\/$/, '');
-  return clean.endsWith('/api') ? clean : `${clean}/api`;
-};
+const getBaseUrl = (): string => '/api';
 
 const API_BASE_URL = getBaseUrl();
 

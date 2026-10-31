@@ -11,7 +11,7 @@ import { TableSkeleton } from '@/portal/components/ui/skeleton';
 import { EmptyState } from '@/portal/components/ui/empty-state';
 import { useToast } from '@/portal/components/ui/toast';
 import { apiFetch } from '@/portal/lib/api/client';
-import { ServicePackage } from '@patient-portal/shared';
+import { ServicePackage } from '@/portal/shared';
 
 export default function PackagesPage() {
   const { showToast } = useToast();

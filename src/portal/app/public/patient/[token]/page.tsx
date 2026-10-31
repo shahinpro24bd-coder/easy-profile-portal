@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams } from '@/portal/shims/next-navigation';
 import {
   Lock,
   User,
@@ -17,7 +17,7 @@ import { Button } from '@/portal/components/ui/button';
 import { Modal } from '@/portal/components/ui/modal';
 import { ReceiptDocument } from '@/portal/components/receipt/receipt-document';
 import { apiFetch } from '@/portal/lib/api/client';
-import { Receipt } from '@patient-portal/shared';
+import { Receipt } from '@/portal/shared';
 
 export default function PublicPatientProfilePage() {
   const params = useParams();

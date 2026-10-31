@@ -2,7 +2,7 @@
 import React from 'react';
 import { ShieldAlert, Lock } from 'lucide-react';
 import { Button } from './button';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/portal/shims/next-navigation';
 
 export const UnauthorizedState: React.FC = () => {
   const router = useRouter();

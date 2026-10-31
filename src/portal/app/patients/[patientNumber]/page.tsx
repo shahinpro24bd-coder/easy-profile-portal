@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useParams, useRouter } from '@/portal/shims/next-navigation';
+import Link from '@/portal/shims/next-link';
 import {
   User,
   Phone,
@@ -42,7 +42,7 @@ import { ReceiptDocument } from '@/portal/components/receipt/receipt-document';
 import { ToothSelector, ToothVector } from '@/portal/components/dental/tooth-selector-modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { apiFetch } from '@/portal/lib/api/client';
-import { Patient, ImageMetadata, Receipt, Appointment, AppointmentStatus, PatientAccountBalance, PaymentMethod, InvoicePayment } from '@patient-portal/shared';
+import { Patient, ImageMetadata, Receipt, Appointment, AppointmentStatus, PatientAccountBalance, PaymentMethod, InvoicePayment } from '@/portal/shared';
 import { getAppointmentLifecycle } from '@/portal/lib/utils/date-time';
 
 export default function PatientProfilePage() {

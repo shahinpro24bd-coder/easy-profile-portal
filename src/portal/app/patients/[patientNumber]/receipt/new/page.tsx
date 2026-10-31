@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useMemo, Suspense } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useParams, useRouter, useSearchParams } from '@/portal/shims/next-navigation';
+import Link from '@/portal/shims/next-link';
 import {
   Receipt as ReceiptIcon,
   ArrowLeft,
@@ -32,7 +32,7 @@ import { ReceiptDocument } from '@/portal/components/receipt/receipt-document';
 import { ToothSelector, ToothSelectorModal } from '@/portal/components/dental/tooth-selector-modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { apiFetch } from '@/portal/lib/api/client';
-import { Patient, ServicePackage, ReceiptItem, PaymentMethod, Receipt, PatientAccountBalance } from '@patient-portal/shared';
+import { Patient, ServicePackage, ReceiptItem, PaymentMethod, Receipt, PatientAccountBalance } from '@/portal/shared';
 
 function ReceiptFormContent() {
   const params = useParams();

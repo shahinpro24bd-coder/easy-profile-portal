@@ -24,7 +24,7 @@ import { Button } from '@/portal/components/ui/button';
 import { Input } from '@/portal/components/ui/input';
 import { Modal } from '@/portal/components/ui/modal';
 import { apiFetch } from '@/portal/lib/api/client';
-import { DailyPatient } from '@patient-portal/shared';
+import { DailyPatient } from '@/portal/shared';
 import { useToast } from '@/portal/components/ui/toast';
 
 type DailyPatientForm = {

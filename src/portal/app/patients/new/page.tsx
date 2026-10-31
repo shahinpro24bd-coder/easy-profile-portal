@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/portal/shims/next-navigation';
 import {
   User,
   Phone,
@@ -29,7 +29,7 @@ import { Modal } from '@/portal/components/ui/modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { ToothSelector, ToothSelectorModal } from '@/portal/components/dental/tooth-selector-modal';
 import { apiFetch } from '@/portal/lib/api/client';
-import { ImageMetadata } from '@patient-portal/shared';
+import { ImageMetadata } from '@/portal/shared';
 
 interface DuplicatePatientInfo {
   id: string;

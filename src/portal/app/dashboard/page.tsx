@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link from '@/portal/shims/next-link';
+import { useRouter } from '@/portal/shims/next-navigation';
 import {
   Users,
   Calendar,
@@ -28,7 +28,7 @@ import { Button } from '@/portal/components/ui/button';
 import { Modal } from '@/portal/components/ui/modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { apiFetch } from '@/portal/lib/api/client';
-import { DashboardStats, Patient, Appointment } from '@patient-portal/shared';
+import { DashboardStats, Patient, Appointment } from '@/portal/shared';
 import { getAppointmentLifecycle, parseAppointmentDateTime, getDhakaDateString } from '@/portal/lib/utils/date-time';
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -68,8 +68,7 @@ export default function DashboardPage() {
     setPasswordError('');
 
     const configuredMasterPassword =
-      process.env.NEXT_PUBLIC_MASTER_PASSWORD ||
-      process.env.MASTER_PASSWORD ||
+      (import.meta.env.VITE_MASTER_PASSWORD as string | undefined) ||
       'master@admin';
 
     const entered = passwordInput.trim();

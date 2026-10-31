@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/portal/shims/next-navigation';
 import { useAuth } from '@/portal/lib/auth/auth-context';
 import { Sidebar } from '@/portal/components/layout/sidebar';
 import { Header } from '@/portal/components/layout/header';

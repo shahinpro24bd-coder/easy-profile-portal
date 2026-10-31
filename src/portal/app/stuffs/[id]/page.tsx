@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useParams, useRouter } from '@/portal/shims/next-navigation';
+import Link from '@/portal/shims/next-link';
 import {
   Users,
   ArrowLeft,
@@ -27,7 +27,7 @@ import { Input } from '@/portal/components/ui/input';
 import { Modal } from '@/portal/components/ui/modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { apiFetch } from '@/portal/lib/api/client';
-import { Staff, StaffMonthRecord, SalaryPayment, PaymentMethod } from '@patient-portal/shared';
+import { Staff, StaffMonthRecord, SalaryPayment, PaymentMethod } from '@/portal/shared';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
