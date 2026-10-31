@@ -229,6 +229,25 @@ export default function NewPatientPage() {
         const patientNumber = patient.patientNumber || patient.id || patient._id;
         showToast(`Patient #${patientNumber} registered successfully`, 'success');
 
+        // Also put this patient on today's Daily Patients list (best effort)
+        try {
+          const d = new Date();
+          const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+          await apiFetch('/daily-patients', {
+            method: 'POST',
+            body: JSON.stringify({
+              patientName: fullName.trim(),
+              phone: phone.trim(),
+              age: age || undefined,
+              location: [village.trim(), district.trim()].filter(Boolean).join(', ') || undefined,
+              treatment: patientProblem.trim() || undefined,
+              notes: `Patient #${patientNumber}`,
+              paymentStatus: 'pending',
+              date: today
+            })
+          });
+        } catch { /* ignore */ }
+
         if (continueToReceipt) {
           const teethQuery = selectedTeeth.length > 0 ? `?teeth=${selectedTeeth.join(',')}` : '';
           router.push(`/patients/${patientNumber}/receipt/new${teethQuery}`);
