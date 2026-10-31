@@ -45,7 +45,8 @@ import { useToast } from '@/portal/components/ui/toast';
 import { PatientQuickActions } from '@/portal/components/patient/quick-actions';
 import { apiFetch } from '@/portal/lib/api/client';
 import { Patient, ImageMetadata, Receipt, Appointment, AppointmentStatus, PatientAccountBalance, PaymentMethod, InvoicePayment } from '@/portal/shared';
-import { getAppointmentLifecycle } from '@/portal/lib/utils/date-time';
+import { getAppointmentLifecycle, getDhakaDateString } from '@/portal/lib/utils/date-time';
+import { PaymentDateField, paymentDateToIso } from '@/portal/components/patient/payment-date-field';
 
 export default function PatientProfilePage() {
   const params = useParams();
@@ -84,6 +85,8 @@ export default function PatientProfilePage() {
   const [paymentReceiptNumber, setPaymentReceiptNumber] = useState<string>('auto');
   const [paymentTransactionId, setPaymentTransactionId] = useState('');
   const [paymentNotes, setPaymentNotes] = useState('');
+  const [paymentDate, setPaymentDate] = useState(getDhakaDateString());
+  const [editPayDate, setEditPayDate] = useState('');
   const [isSavingPayment, setIsSavingPayment] = useState(false);
 
   const [editPaymentTarget, setEditPaymentTarget] = useState<{ payment: InvoicePayment; receiptNumber: number } | null>(null);
@@ -312,7 +315,9 @@ export default function PatientProfilePage() {
           paymentMethod,
           receiptNumber: paymentReceiptNumber === 'auto' ? undefined : Number(paymentReceiptNumber),
           transactionId: paymentTransactionId.trim() || undefined,
-          notes: paymentNotes.trim() || undefined
+          notes: paymentNotes.trim() || undefined,
+          paymentDate: paymentDateToIso(paymentDate),
+          date: paymentDateToIso(paymentDate)
         })
       });
       if (res.success) {
@@ -321,6 +326,7 @@ export default function PatientProfilePage() {
         setPaymentAmount('');
         setPaymentNotes('');
         setPaymentTransactionId('');
+        setPaymentDate(getDhakaDateString());
         fetchPatientData();
       } else {
         showToast(res.error || 'Failed to record payment', 'error');
@@ -339,6 +345,8 @@ export default function PatientProfilePage() {
     setEditPayTransactionId(payment.transactionId || '');
     setEditPayNotes(payment.notes || '');
     setEditPayReason('');
+    const pd = payment.paymentDate || payment.date || payment.createdAt;
+    setEditPayDate(pd ? getDhakaDateString(new Date(pd)) : getDhakaDateString());
   };
 
   const handleSaveEditPayment = async (e: React.FormEvent) => {
@@ -363,6 +371,8 @@ export default function PatientProfilePage() {
           paymentMethod: editPayMethod,
           transactionId: editPayTransactionId.trim() || undefined,
           notes: editPayNotes.trim() || undefined,
+          paymentDate: paymentDateToIso(editPayDate),
+          date: paymentDateToIso(editPayDate),
           reason: editPayReason.trim()
         })
       });
@@ -1779,6 +1789,8 @@ export default function PatientProfilePage() {
             autoFocus
           />
 
+          <PaymentDateField value={paymentDate} onChange={setPaymentDate} />
+
           <div>
             <label className="block text-xs font-semibold text-gray-300 mb-1.5">Apply Payment To</label>
             <select
@@ -1958,6 +1970,8 @@ export default function PatientProfilePage() {
               required
               autoFocus
             />
+
+            <PaymentDateField value={editPayDate} onChange={setEditPayDate} />
 
             <div>
               <label className="block text-xs font-semibold text-gray-300 mb-1.5">Payment Method</label>
