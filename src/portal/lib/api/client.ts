@@ -1,4 +1,4 @@
-﻿
+
 const getBaseUrl = (): string => {
   if (typeof window !== 'undefined') {
     return '/api';

@@ -1,4 +1,4 @@
-﻿export const CLINIC_TIMEZONE = 'Asia/Dhaka';
+export const CLINIC_TIMEZONE = 'Asia/Dhaka';
 export const DHAKA_OFFSET_STRING = '+06:00';
 
 export function getDhakaDateString(date: Date = new Date()): string {
