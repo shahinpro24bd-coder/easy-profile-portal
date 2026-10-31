@@ -32,7 +32,7 @@ export const PatientFinder: React.FC<{ className?: string }> = ({ className = ''
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 150);
     return () => clearTimeout(t);
   }, [q]);
 
@@ -67,7 +67,7 @@ export const PatientFinder: React.FC<{ className?: string }> = ({ className = ''
           if (e.key === 'Enter' && results[active]) go(results[active]);
           if (e.key === 'Escape') setOpen(false);
         }}
-        placeholder="রোগী খুঁজুন: নাম / ফোন / নম্বর"
+        placeholder="Patient Lookup — নাম / ফোন / নম্বর লিখুন"
         aria-label="Find a patient by name, phone or number"
         className="w-full glass-input text-xs rounded-xl pl-10 pr-4 py-2.5 text-gray-200 placeholder:text-gray-500"
       />
