@@ -12,6 +12,7 @@ import {
   MessageSquare,
   Settings,
   LogOut,
+  UserPlus,
   Activity,
   Wrench,
   Briefcase,
@@ -21,16 +22,16 @@ import { useAuth } from '@/portal/lib/auth/auth-context';
 import { ThemeToggle } from '@/portal/components/ui/theme-toggle';
 
 const navItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Patients', href: '/patients', icon: Users },
-  { name: 'Daily Patients', href: '/all-patients', icon: FileSpreadsheet },
-  { name: 'Appointments', href: '/appointments', icon: Calendar },
-  { name: 'Receipts', href: '/receipts', icon: Receipt },
-  { name: 'Accessories', href: '/accessories', icon: Wrench },
-  { name: 'Staff & Payroll', href: '/stuffs', icon: Briefcase },
-  { name: 'Packages', href: '/packages', icon: Package },
-  { name: 'SMS', href: '/smsinfo', icon: MessageSquare },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Dashboard', bn: 'হোম', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Patients', bn: 'সব রোগী', href: '/patients', icon: Users },
+  { name: 'Daily Patients', bn: 'আজকের রোগী', href: '/all-patients', icon: FileSpreadsheet },
+  { name: 'Appointments', bn: 'অ্যাপয়েন্টমেন্ট', href: '/appointments', icon: Calendar },
+  { name: 'Receipts', bn: 'বিল / রিসিট', href: '/receipts', icon: Receipt },
+  { name: 'Accessories', bn: 'যন্ত্রপাতি', href: '/accessories', icon: Wrench },
+  { name: 'Staff & Payroll', bn: 'স্টাফ ও বেতন', href: '/stuffs', icon: Briefcase },
+  { name: 'Packages', bn: 'প্যাকেজ', href: '/packages', icon: Package },
+  { name: 'SMS', bn: 'এসএমএস', href: '/smsinfo', icon: MessageSquare },
+  { name: 'Settings', bn: 'সেটিংস', href: '/settings', icon: Settings },
 ];
 
 export const Sidebar: React.FC<{ onCloseMobile?: () => void }> = ({ onCloseMobile }) => {
@@ -50,6 +51,17 @@ export const Sidebar: React.FC<{ onCloseMobile?: () => void }> = ({ onCloseMobil
         </div>
       </div>
 
+      <div className="px-4 pt-4">
+        <Link
+          href="/patients/new"
+          onClick={onCloseMobile}
+          className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-br from-red-600 to-red-900 border border-red-500/50 shadow-glow-red-sm active:scale-[0.98] transition-transform"
+        >
+          <UserPlus className="w-4 h-4" />
+          নতুন রোগী যোগ করুন
+        </Link>
+      </div>
+
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -67,7 +79,10 @@ export const Sidebar: React.FC<{ onCloseMobile?: () => void }> = ({ onCloseMobil
               }`}
             >
               <Icon className={`w-4 h-4 ${isActive ? 'text-red-400' : 'text-gray-400'}`} />
-              <span>{item.name}</span>
+              <span className="flex flex-col leading-tight">
+                <span>{item.name}</span>
+                <span className={`text-[11px] font-normal ${isActive ? 'text-red-200/80' : 'text-gray-500'}`}>{item.bn}</span>
+              </span>
             </Link>
           );
         })}
