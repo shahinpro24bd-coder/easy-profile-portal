@@ -469,11 +469,12 @@ export default function NewPatientPage() {
             <label className="block text-xs font-medium text-gray-300 uppercase tracking-wide">
               Medical Concern & Symptoms *
             </label>
+            <ProblemPicker value={patientProblem} onChange={setPatientProblem} />
             <textarea
-              rows={4}
+              rows={3}
               value={patientProblem}
               onChange={(e) => setPatientProblem(e.target.value)}
-              placeholder="Describe the patient's primary symptoms, complaints, clinical history, or consultation reason..."
+              placeholder="উপরে থেকে সমস্যা বেছে নিন, অথবা চাইলে এখানে লিখুন (optional extra notes)..."
               className={`w-full glass-input rounded-xl p-3.5 text-sm text-gray-100 placeholder:text-gray-500 resize-none ${
                 errors.patientProblem ? 'border-red-500 shadow-[0_0_12px_rgba(239,68,68,0.2)]' : ''
               }`}
