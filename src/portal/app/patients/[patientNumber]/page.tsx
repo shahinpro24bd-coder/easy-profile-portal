@@ -1,7 +1,7 @@
 // @ts-nocheck -- legacy portal code ported from the original Next.js app
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useParams, useRouter } from '@/portal/shims/next-navigation';
+import { useParams, useRouter, useSearchParams } from '@/portal/shims/next-navigation';
 import Link from '@/portal/shims/next-link';
 import {
   User,
@@ -238,6 +238,16 @@ export default function PatientProfilePage() {
   const handleDeleteImage = () => {
     setEditProfileImage(null);
   };
+
+  const searchParams = useSearchParams();
+  const autoEditDone = useRef(false);
+  useEffect(() => {
+    if (patient && !autoEditDone.current && searchParams.get('edit') === '1') {
+      autoEditDone.current = true;
+      handleOpenEdit();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [patient, searchParams]);
 
   const handleUpdatePatient = async (e: React.FormEvent) => {
     e.preventDefault();
