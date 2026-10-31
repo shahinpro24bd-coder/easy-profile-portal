@@ -24,7 +24,7 @@ export const PatientFinder: React.FC<{ className?: string; inputClassName?: stri
     setLoading(true);
     const t = setTimeout(async () => {
       try {
-        const res = await apiFetch<Found[]>(`/patients?page=1&limit=6&search=${encodeURIComponent(term)}`);
+        const res = await apiFetch<Found[]>(`/patients?page=1&limit=8&search=${encodeURIComponent(term)}`);
         setResults(Array.isArray(res.data) ? res.data : []);
         setActive(0);
       } catch {
@@ -50,63 +50,94 @@ export const PatientFinder: React.FC<{ className?: string; inputClassName?: stri
     router.push(`/patients/${p.patientNumber}`);
   };
 
+  const term = q.trim();
+  const showPanel = open && !!term;
+
+  // Google-style: typed part normal, the rest bold
+  const hl = (text: string) => {
+    const i = text.toLowerCase().indexOf(term.toLowerCase());
+    if (!term || i < 0) return <span className="font-semibold text-gray-100">{text}</span>;
+    return (
+      <>
+        <span className="font-semibold text-gray-100">{text.slice(0, i)}</span>
+        <span className="font-normal text-gray-400">{text.slice(i, i + term.length)}</span>
+        <span className="font-semibold text-gray-100">{text.slice(i + term.length)}</span>
+      </>
+    );
+  };
+
   return (
     <div ref={boxRef} className={`relative ${className}`}>
-      <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-      <input
-        type="search"
-        value={q}
-        onChange={(e) => {
-          setQ(e.target.value);
-          onQueryChange?.(e.target.value);
-          setOpen(true);
-        }}
-        onFocus={() => setOpen(true)}
-        onKeyDown={(e) => {
-          if (e.key === 'ArrowDown') { e.preventDefault(); setActive((a) => Math.min(a + 1, results.length - 1)); }
-          if (e.key === 'ArrowUp') { e.preventDefault(); setActive((a) => Math.max(a - 1, 0)); }
-          if (e.key === 'Enter' && results[active]) go(results[active]);
-          if (e.key === 'Escape') setOpen(false);
-        }}
-        placeholder={placeholder || "Patient Lookup — নাম / ফোন / নম্বর লিখুন"}
-        aria-label="Find a patient by name, phone or number"
-        className={`w-full glass-input ${inputClassName} rounded-xl pl-10 pr-4 py-2.5 text-gray-200 placeholder:text-gray-500`}
-      />
-      {open && q.trim() && (
-        <div className="absolute left-0 right-0 top-full mt-1 z-50 rounded-xl border border-white/10 shadow-glass overflow-hidden" style={{ background: 'var(--sidebar-bg)' }}>
-          {loading ? (
-            <div className="flex items-center gap-2 px-4 py-3 text-xs text-gray-400">
-              <Loader2 className="w-4 h-4 animate-spin" /> খোঁজা হচ্ছে...
-            </div>
-          ) : results.length ? (
-            results.map((p, i) => (
-              <button
-                key={String(p.patientNumber)}
-                type="button"
-                onMouseEnter={() => setActive(i)}
-                onClick={() => go(p)}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${i === active ? 'bg-white/[0.06]' : ''}`}
-              >
-                <div className="w-8 h-8 rounded-lg bg-red-950/60 border border-red-800/40 flex items-center justify-center text-red-400 shrink-0">
-                  <User className="w-4 h-4" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold text-gray-100 truncate">{p.fullName || 'Patient'}</p>
-                  <p className="text-[11px] text-gray-400 font-mono truncate">#{p.patientNumber}{p.phone ? ` · ${p.phone}` : ''}</p>
-                </div>
-              </button>
-            ))
-          ) : (
-            <button
-              type="button"
-              onClick={() => { setOpen(false); router.push('/patients/new'); }}
-              className="w-full flex items-center gap-2 px-4 py-3 text-xs text-gray-300 hover:bg-white/[0.06]"
-            >
-              <UserPlus className="w-4 h-4 text-red-400" /> কাউকে পাওয়া যায়নি — নতুন রোগী যোগ করুন
-            </button>
-          )}
+      <div
+        className={showPanel ? 'absolute left-0 right-0 top-0 z-50 rounded-2xl border border-white/10 shadow-glass overflow-hidden' : ''}
+        style={showPanel ? { background: 'var(--sidebar-bg)' } : undefined}
+      >
+        <div className="relative">
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => {
+              setQ(e.target.value);
+              onQueryChange?.(e.target.value);
+              setOpen(true);
+            }}
+            onFocus={() => setOpen(true)}
+            onKeyDown={(e) => {
+              if (e.key === 'ArrowDown') { e.preventDefault(); setActive((a) => Math.min(a + 1, results.length - 1)); }
+              if (e.key === 'ArrowUp') { e.preventDefault(); setActive((a) => Math.max(a - 1, 0)); }
+              if (e.key === 'Enter' && results[active]) go(results[active]);
+              if (e.key === 'Escape') setOpen(false);
+            }}
+            placeholder={placeholder || "Patient Lookup — নাম / ফোন / নম্বর লিখুন"}
+            aria-label="Find a patient by name, phone or number"
+            className={showPanel
+              ? `w-full bg-transparent outline-none border-0 ${inputClassName} pl-10 pr-10 py-2.5 text-gray-100 placeholder:text-gray-500`
+              : `w-full glass-input ${inputClassName} rounded-xl pl-10 pr-4 py-2.5 text-gray-200 placeholder:text-gray-500`}
+          />
+          {showPanel && loading && <Loader2 className="w-4 h-4 animate-spin absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400" />}
         </div>
-      )}
+
+        {showPanel && (
+          <div className="border-t border-white/10 py-1.5">
+            {results.length ? (
+              results.map((p, i) => (
+                <button
+                  key={String(p.patientNumber)}
+                  type="button"
+                  onMouseEnter={() => setActive(i)}
+                  onClick={() => go(p)}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2 text-left transition-colors border-l-2 ${i === active ? 'bg-white/[0.06] border-red-500' : 'border-transparent'}`}
+                >
+                  <div className="w-8 h-8 rounded-full bg-red-950/60 border border-red-800/40 flex items-center justify-center text-red-400 text-xs font-bold shrink-0">
+                    {(p.fullName || '?').trim().charAt(0).toUpperCase() || <User className="w-4 h-4" />}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm truncate">{hl(p.fullName || 'Patient')}</p>
+                    <p className="text-[11px] text-gray-500 truncate">
+                      রোগী #{hl(String(p.patientNumber))}{p.phone ? <> · {hl(p.phone)}</> : null}
+                    </p>
+                  </div>
+                </button>
+              ))
+            ) : loading ? (
+              <div className="flex items-center gap-2 px-4 py-2.5 text-xs text-gray-400">
+                <Search className="w-4 h-4" /> খোঁজা হচ্ছে...
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => { setOpen(false); router.push('/patients/new'); }}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-gray-300 hover:bg-white/[0.06]"
+              >
+                <UserPlus className="w-4 h-4 text-red-400" /> কাউকে পাওয়া যায়নি — নতুন রোগী যোগ করুন
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+      {/* keeps layout height while the panel floats */}
+      {showPanel && <div className={`invisible ${inputClassName} py-2.5`}>.</div>}
     </div>
   );
 };

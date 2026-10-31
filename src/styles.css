@@ -3,3 +3,8 @@
  * public/legacy/portal.css and loaded in __root.tsx. Regenerate it after changing classes —
  * see portal-styles/README.md. Tailwind v4 is intentionally not used, so nothing renders differently.
  */
+
+.border-l-2{border-left-width:2px;border-left-style:solid}
+.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}
+.px-3\.5{padding-left:.875rem;padding-right:.875rem}
+.right-3\.5{right:.875rem}
