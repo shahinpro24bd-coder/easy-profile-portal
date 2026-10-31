@@ -4,6 +4,7 @@ import React from 'react';
 import { Search, Bell, User, Menu } from 'lucide-react';
 import { useAuth } from '@/portal/lib/auth/auth-context';
 import { ThemeToggle } from '@/portal/components/ui/theme-toggle';
+import { PatientFinder } from '@/portal/components/layout/patient-finder';
 
 interface HeaderProps {
   onToggleMobileMenu: () => void;
@@ -14,7 +15,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, pageTitle = 
   const { user } = useAuth();
 
   return (
-    <header className="h-20 px-6 flex items-center justify-between glass-panel border-b border-white/10 dark:border-white/10 sticky top-0 z-30 backdrop-blur-xl">
+    <header className="h-20 px-6 flex items-center justify-between glass-panel border-b border-white/10 dark:border-white/10 sticky top-0 z-30 mb-14 md:mb-0 backdrop-blur-xl">
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleMobileMenu}
@@ -31,14 +32,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, pageTitle = 
       </div>
 
       <div className="flex items-center gap-3 sm:gap-4">
-        <div className="relative hidden md:block w-56 lg:w-64">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Quick search..."
-            className="w-full glass-input text-xs rounded-xl pl-10 pr-4 py-2 text-gray-200 placeholder:text-gray-500"
-          />
-        </div>
+        <PatientFinder className="hidden md:block w-64 lg:w-80" />
 
         <ThemeToggle />
 
@@ -51,6 +45,9 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, pageTitle = 
             <p className="text-[10px] text-gray-400 leading-tight">{user?.email || 'admin@luckydental.com'}</p>
           </div>
         </div>
+      </div>
+      <div className="md:hidden absolute left-0 right-0 top-full px-3 py-2 glass-panel border-b border-white/10">
+        <PatientFinder />
       </div>
     </header>
   );
