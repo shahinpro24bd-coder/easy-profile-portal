@@ -29,6 +29,7 @@ import { Button } from '@/portal/components/ui/button';
 import { Modal } from '@/portal/components/ui/modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { apiFetch } from '@/portal/lib/api/client';
+import { PatientFinder } from '@/portal/components/layout/patient-finder';
 import { DashboardStats, Patient, Appointment } from '@/portal/shared';
 import { getAppointmentLifecycle, parseAppointmentDateTime, getDhakaDateString } from '@/portal/lib/utils/date-time';
 
@@ -118,12 +119,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link href="/patients">
-            <Button variant="outline" size="sm" className="gap-2 text-xs">
-              <Search className="w-3.5 h-3.5" />
-              Patient Lookup
-            </Button>
-          </Link>
+          <PatientFinder className="w-64 sm:w-72" />
           <Link href="/patients/new">
             <Button variant="primary" size="sm" className="gap-2 text-xs shadow-glow-red">
               <Plus className="w-3.5 h-3.5" />
