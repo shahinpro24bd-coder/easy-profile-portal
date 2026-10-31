@@ -20,6 +20,7 @@ import {
   CalendarDays,
   Clock3,
   X
+  Edit3,
 } from 'lucide-react';
 import DashboardLayout from '@/portal/app/dashboard/layout';
 import { GlassCard } from '@/portal/components/ui/glass-card';
@@ -301,6 +302,15 @@ export default function PatientsPage() {
                             Bill
                           </Button>
                         </Link>
+                        <Link href={`/patients/${patient.patientNumber}?edit=1`}>
+                          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-gray-300 gap-1">
+                            <Edit3 className="w-3 h-3" />
+                            Edit
+                          </Button>
+                        </Link>
+                        <Button variant="ghost" size="sm" onClick={() => setPatientToDelete(patient)} className="h-7 px-2 text-xs text-red-400 gap-1" aria-label="Delete patient">
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
                         <Link href={`/patients/${patient.patientNumber}`}>
                           <Button variant="primary" size="sm" className="h-7 px-2.5 text-xs gap-1">
                             <Eye className="w-3 h-3" />
@@ -332,7 +342,11 @@ export default function PatientsPage() {
                       {patients.map((patient) => (
                         <tr
                           key={patient.id || (patient as any)._id}
-                          className="hover:bg-white/[0.03] transition-colors"
+                          className="hover:bg-white/[0.03] transition-colors cursor-pointer"
+                          onClick={(e) => {
+                            if ((e.target as HTMLElement).closest('a,button')) return;
+                            router.push(`/patients/${patient.patientNumber}`);
+                          }}
                         >
                           <td className="py-4 px-5 font-mono text-xs text-red-400 font-bold">
                             #{patient.patientNumber}
@@ -370,6 +384,13 @@ export default function PatientsPage() {
                                 </Button>
                               </Link>
 
+                              <Link href={`/patients/${patient.patientNumber}?edit=1`}>
+                                <Button variant="ghost" size="sm" className="h-8 px-2.5 text-xs gap-1 text-gray-300 hover:text-white">
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                  Edit
+                                </Button>
+                              </Link>
+
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -378,6 +399,7 @@ export default function PatientsPage() {
                                 aria-label="Delete patient"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
+                                Delete
                               </Button>
                             </div>
                           </td>
