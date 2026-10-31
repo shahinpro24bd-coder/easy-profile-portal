@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Page from "@/portal/app/dashboard/page";
+import DashboardLayout from "@/portal/app/dashboard/layout";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -10,5 +11,10 @@ export const Route = createFileRoute("/dashboard")({
       { property: "og:description", content: "Luckydental dental care system: Dashboard." },
     ],
   }),
-  component: Page,
+  // In the original Next.js app, app/dashboard/layout.tsx wrapped this page automatically.
+  component: () => (
+    <DashboardLayout>
+      <Page />
+    </DashboardLayout>
+  ),
 });
