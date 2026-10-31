@@ -28,6 +28,8 @@ import { Button } from '@/portal/components/ui/button';
 import { Input } from '@/portal/components/ui/input';
 import { Modal } from '@/portal/components/ui/modal';
 import { DatePicker } from '@/portal/components/ui/date-picker';
+import { PaymentDateField, paymentDateToIso } from '@/portal/components/patient/payment-date-field';
+import { getDhakaDateString } from '@/portal/lib/utils/date-time';
 import { TimePicker } from '@/portal/components/ui/time-picker';
 import { ReceiptDocument } from '@/portal/components/receipt/receipt-document';
 import { ToothSelector, ToothSelectorModal } from '@/portal/components/dental/tooth-selector-modal';
@@ -71,6 +73,7 @@ function ReceiptFormContent() {
   const [discountType, setDiscountType] = useState<'flat' | 'percentage'>('flat');
   const [paidAmount, setPaidAmount] = useState<string>('0');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
+  const [billDate, setBillDate] = useState<string>(getDhakaDateString());
   const [notes, setNotes] = useState('');
 
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
@@ -123,6 +126,7 @@ function ReceiptFormContent() {
             setDiscountType(rec.discountType || 'flat');
             setPaidAmount(String(rec.paidAmount || 0));
             setPaymentMethod(rec.paymentMethod || 'cash');
+            if (rec.createdAt) setBillDate(getDhakaDateString(new Date(rec.receiptDate || rec.createdAt)));
             setNotes(rec.notes || '');
             if (rec.appointmentDate) setAppointmentDate(rec.appointmentDate);
             if (rec.appointmentTime) setAppointmentTime(rec.appointmentTime);
@@ -352,10 +356,10 @@ function ReceiptFormContent() {
       status: dueAmount === 0 && totalPayable > 0 ? 'paid' : paidNum > 0 ? 'partial' : 'pending',
       notes,
       version: editReceipt?.version || 1,
-      createdAt: editReceipt?.createdAt || new Date().toISOString(),
+      createdAt: paymentDateToIso(billDate) || editReceipt?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-  }, [editReceipt, isEditMode, previousDueSnapshot, patient, patientNumber, appointmentDate, appointmentTime, items, subtotal, discountAmount, discountType, visitTotal, totalPayable, paidNum, dueAmount, paymentMethod, notes]);
+  }, [editReceipt, isEditMode, previousDueSnapshot, patient, patientNumber, appointmentDate, appointmentTime, items, subtotal, discountAmount, discountType, visitTotal, totalPayable, paidNum, dueAmount, paymentMethod, notes, billDate]);
 
   const handleSaveReceipt = async (triggerPrint = false) => {
     if (submittingRef.current || isSubmitting) return;
@@ -406,6 +410,9 @@ function ReceiptFormContent() {
         appointmentDate: appointmentDate?.trim() || undefined,
         appointmentTime: appointmentTime?.trim() || undefined,
         notes: notes.trim() || undefined,
+        receiptDate: paymentDateToIso(billDate),
+        createdAt: paymentDateToIso(billDate),
+        paymentDate: paymentDateToIso(billDate),
         isNewReceipt: !isEditMode
       };
 
@@ -930,6 +937,9 @@ function ReceiptFormContent() {
                   </div>
                 </div>
 
+                <div className="pt-2 border-t border-slate-100 dark:border-white/5">
+                  <PaymentDateField value={billDate} onChange={setBillDate} label="বিল / টাকা কোন দিনের?" sub="Bill & payment date" />
+                </div>
                 <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-white/5" ref={paidAmountRef}>
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-semibold text-slate-700 dark:text-gray-300">
