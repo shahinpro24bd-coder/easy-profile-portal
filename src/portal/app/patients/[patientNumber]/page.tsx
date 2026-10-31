@@ -758,7 +758,6 @@ export default function PatientProfilePage() {
         </div>
 
         <PatientQuickActions
-          patient={patient}
           patientNumber={patient.patientNumber}
           phone={patient.phone}
           hasDue={Boolean(accountBalance?.outstandingDue)}
