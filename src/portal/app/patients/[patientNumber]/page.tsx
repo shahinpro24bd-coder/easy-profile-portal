@@ -42,6 +42,7 @@ import { TimePicker } from '@/portal/components/ui/time-picker';
 import { ReceiptDocument } from '@/portal/components/receipt/receipt-document';
 import { ToothSelector, ToothVector } from '@/portal/components/dental/tooth-selector-modal';
 import { useToast } from '@/portal/components/ui/toast';
+import { PatientQuickActions } from '@/portal/components/patient/quick-actions';
 import { apiFetch } from '@/portal/lib/api/client';
 import { Patient, ImageMetadata, Receipt, Appointment, AppointmentStatus, PatientAccountBalance, PaymentMethod, InvoicePayment } from '@/portal/shared';
 import { getAppointmentLifecycle } from '@/portal/lib/utils/date-time';
@@ -746,6 +747,20 @@ export default function PatientProfilePage() {
           </div>
         </div>
 
+        <PatientQuickActions
+          patientNumber={patient.patientNumber}
+          phone={patient.phone}
+          hasDue={Boolean(accountBalance?.outstandingDue)}
+          onPayment={() => {
+            setPaymentAmount(accountBalance?.outstandingDue ? String(accountBalance.outstandingDue) : '');
+            setShowPaymentModal(true);
+          }}
+          onAppointment={() => setShowAppointmentModal(true)}
+          onEdit={handleOpenEdit}
+          onShare={() => (patient.isPublic ? handleCopyPublicLink() : handleTogglePublic(true))}
+          onDelete={() => setShowDeleteModal(true)}
+        />
+
         <GlassCard className="p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
             {profileImageUrl ? (
@@ -896,7 +911,7 @@ export default function PatientProfilePage() {
 
         <GlassCard className="p-5 space-y-4">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
-            <div className="flex items-center gap-2">
+            <div id="patient-appointments" className="flex items-center gap-2 scroll-mt-28">
               <CalendarIcon className="w-4 h-4 text-red-400" />
               <h3 className="text-sm font-bold text-gray-100 uppercase tracking-wider">
                 Appointments & Consultations ({appointments.length})
@@ -1004,7 +1019,7 @@ export default function PatientProfilePage() {
 
         <GlassCard className="p-5 space-y-4">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
-            <div className="flex items-center gap-2">
+            <div id="patient-receipts" className="flex items-center gap-2 scroll-mt-28">
               <ReceiptIcon className="w-4 h-4 text-red-400" />
               <h3 className="text-sm font-bold text-gray-100 uppercase tracking-wider">
                 Luckydental Invoices & Receipts ({receipts.length})
