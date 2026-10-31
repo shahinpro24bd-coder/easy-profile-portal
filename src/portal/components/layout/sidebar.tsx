@@ -24,7 +24,6 @@ import { ThemeToggle } from '@/portal/components/ui/theme-toggle';
 const navItems = [
   { name: 'Dashboard', bn: 'হোম', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Patients', bn: 'সব রোগী', href: '/patients', icon: Users },
-  { name: 'Daily Patients', bn: 'আজকের রোগী', href: '/all-patients', icon: FileSpreadsheet },
   { name: 'Appointments', bn: 'অ্যাপয়েন্টমেন্ট', href: '/appointments', icon: Calendar },
   { name: 'Receipts', bn: 'বিল / রিসিট', href: '/receipts', icon: Receipt },
   { name: 'Accessories', bn: 'যন্ত্রপাতি', href: '/accessories', icon: Wrench },
