@@ -10,7 +10,10 @@ import {
   FileText,
   CalendarDays,
   Trash2,
+  ListPlus,
 } from 'lucide-react';
+import { apiFetch } from '@/portal/lib/api/client';
+import { useToast } from '@/portal/components/ui/toast';
 import Link from '@/portal/shims/next-link';
 
 interface QuickActionsProps {
@@ -22,6 +25,7 @@ interface QuickActionsProps {
   onEdit: () => void;
   onShare: () => void;
   onDelete: () => void;
+  patient?: any;
 }
 
 type Tile = {
@@ -52,10 +56,36 @@ export const PatientQuickActions: React.FC<QuickActionsProps> = ({
   onEdit,
   onShare,
   onDelete,
+  patient,
 }) => {
+  const { showToast } = useToast();
+  const addToToday = async () => {
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    try {
+      const res = await apiFetch('/daily-patients', {
+        method: 'POST',
+        body: JSON.stringify({
+          patientName: patient?.fullName || `Patient #${patientNumber}`,
+          phone: phone || '',
+          age: patient?.age ? String(patient.age) : undefined,
+          location: [patient?.village, patient?.district].filter(Boolean).join(', ') || undefined,
+          treatment: patient?.patientProblem || undefined,
+          notes: `Patient #${patientNumber}`,
+          paymentStatus: 'pending',
+          date: today,
+        }),
+      });
+      if (res.success) showToast('আজকের রোগীর লিস্টে যোগ হয়েছে (Added to today)', 'success');
+      else showToast(res.error || 'যোগ করা যায়নি', 'error');
+    } catch {
+      showToast('যোগ করা যায়নি', 'error');
+    }
+  };
   const cleanPhone = (phone || '').replace(/[^\d+]/g, '');
 
   const tiles: Tile[] = [
+    { key: 'today', bn: 'আজ এসেছে — লিস্টে তুলুন', en: "Add to Today's List", icon: ListPlus, primary: true, onClick: addToToday },
     { key: 'bill', bn: 'নতুন বিল', en: 'New Bill', icon: ReceiptIcon, primary: true, href: `/patients/${patientNumber}/receipt/new` },
     { key: 'pay', bn: hasDue ? 'বাকি টাকা নিন' : 'টাকা জমা নিন', en: 'Take Payment', icon: Wallet, onClick: onPayment },
     { key: 'apt', bn: 'অ্যাপয়েন্টমেন্ট দিন', en: 'Book Visit', icon: CalendarPlus, onClick: onAppointment },
