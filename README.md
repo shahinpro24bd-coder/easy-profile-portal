@@ -1,14 +1,16 @@
-# Welcome to your Lovable project
+# Easy Profile Portal
+
+ei portal e user interface ta joto ta possible easy kore diba ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,I mean ekjon user er profile thekei jeno take niye sob dhoroner kaj kora jay ,,,( i mean sob dhroner kaj ) ,,,,,,,,,,,,,,,,,,,,,,R portal er interface design same rakhba ......just eita use korar features gulo etota easy hobe jeno ekjon 18 years old baccha o eita use korte pare without any knowlage
 
 This project was built with [Lovable](https://lovable.dev).
 
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/3732b838-da60-4b9b-af09-25c9c164cc76).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +22,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
