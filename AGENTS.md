@@ -16,3 +16,4 @@
 - The app renders client-only inside `ClientOnly` in `__root.tsx`. Why: the legacy pages read localStorage during render/auth.
 - Portal styling uses the original Tailwind v3 config in `portal-styles/`, compiled to `public/legacy/portal.css` (linked in `__root.tsx`); `src/styles.css` must not import Tailwind v4. After adding/changing classes, regenerate per `portal-styles/README.md`. Why: v4 renders the legacy classes differently and broke the original look.
 - `/dashboard` route must wrap its page in `DashboardLayout`. Why: Next.js applied `app/dashboard/layout.tsx` implicitly.
+- Payment reversal requests are assembled in a browser-safe helper with validated payment references and both reason field aliases. Why: legacy API responses may expose `_id` instead of `id`, and reason naming differs across API versions.

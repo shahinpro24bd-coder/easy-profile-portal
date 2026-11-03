@@ -44,6 +44,7 @@ import { ToothSelector, ToothVector } from '@/portal/components/dental/tooth-sel
 import { useToast } from '@/portal/components/ui/toast';
 import { PatientQuickActions } from '@/portal/components/patient/quick-actions';
 import { apiFetch } from '@/portal/lib/api/client';
+import { createPaymentReversalRequest } from '@/portal/lib/api/payment-reversal';
 import { Patient, ImageMetadata, Receipt, Appointment, AppointmentStatus, PatientAccountBalance, PaymentMethod, InvoicePayment } from '@/portal/shared';
 import { getAppointmentLifecycle, getDhakaDateString } from '@/portal/lib/utils/date-time';
 import { PaymentDateField, paymentDateToIso } from '@/portal/components/patient/payment-date-field';
@@ -99,6 +100,7 @@ export default function PatientProfilePage() {
 
   const [revertPaymentTarget, setRevertPaymentTarget] = useState<{ payment: InvoicePayment; receiptNumber: number } | null>(null);
   const [revertReason, setRevertReason] = useState('');
+  const [revertError, setRevertError] = useState('');
   const [isRevertingPayment, setIsRevertingPayment] = useState(false);
 
   const [cancelReceiptTarget, setCancelReceiptTarget] = useState<Receipt | null>(null);
@@ -394,34 +396,32 @@ export default function PatientProfilePage() {
   const handleOpenRevertPayment = (payment: InvoicePayment, receiptNumber: number) => {
     setRevertPaymentTarget({ payment, receiptNumber });
     setRevertReason('');
+    setRevertError('');
   };
 
   const handleConfirmRevertPayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!revertPaymentTarget) return;
+    if (!revertPaymentTarget || isRevertingPayment) return;
     if (!revertReason.trim()) {
-      showToast('Please provide a reason for reversing this payment', 'error');
+      setRevertError('কারণ লিখুন।');
       return;
     }
 
+    setRevertError('');
     setIsRevertingPayment(true);
     try {
-      const res = await apiFetch(`/receipts/${revertPaymentTarget.receiptNumber}/payments/${revertPaymentTarget.payment.id}/revert`, {
-        method: 'POST',
-        body: JSON.stringify({
-          reversalReason: revertReason.trim()
-        })
-      });
+      const request = createPaymentReversalRequest(revertPaymentTarget.receiptNumber, revertPaymentTarget.payment, revertReason);
+      const res = await apiFetch(request.endpoint, request.options);
 
       if (res.success) {
-        showToast(`Payment of ৳${revertPaymentTarget.payment.amount} reversed successfully`, 'success');
+        showToast(`৳${revertPaymentTarget.payment.amount} পেমেন্ট বাতিল হয়েছে`, 'success');
         setRevertPaymentTarget(null);
-        fetchPatientData();
+        await fetchPatientData();
       } else {
-        showToast(res.error || 'Failed to revert payment', 'error');
+        setRevertError(res.error || 'পেমেন্ট বাতিল হয়নি। আবার চেষ্টা করুন।');
       }
-    } catch {
-      showToast('Network error reverting payment', 'error');
+    } catch (error) {
+      setRevertError(error instanceof Error ? error.message : 'সংযোগের সমস্যা হয়েছে। আবার চেষ্টা করুন।');
     } finally {
       setIsRevertingPayment(false);
     }
@@ -2051,8 +2051,8 @@ export default function PatientProfilePage() {
 
       <Modal
         isOpen={Boolean(revertPaymentTarget)}
-        onClose={() => setRevertPaymentTarget(null)}
-        title="Revert / Void Payment"
+        onClose={() => { if (!isRevertingPayment) setRevertPaymentTarget(null); }}
+        title="পেমেন্ট বাতিল / Revert Payment"
         description={`Reverse payment of ৳${revertPaymentTarget?.payment.amount.toLocaleString('en-BD')} on Invoice #${revertPaymentTarget?.receiptNumber}`}
       >
         {revertPaymentTarget && (
@@ -2060,26 +2060,31 @@ export default function PatientProfilePage() {
             <div className="p-4 rounded-xl bg-red-950/60 border border-red-700/50 space-y-2 text-xs">
               <div className="flex items-center gap-2 text-red-300 font-bold">
                 <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-                <span>Financial Impact of Reversal</span>
+                <span>বাতিল করলে বাকি টাকা বাড়বে</span>
               </div>
               <p className="text-red-200/90 leading-relaxed">
-                This transaction of <strong>৳{revertPaymentTarget.payment.amount.toLocaleString('en-BD')}</strong> will be excluded from the active paid amount. The patient&apos;s outstanding due balance will immediately increase by <strong>৳{revertPaymentTarget.payment.amount.toLocaleString('en-BD')}</strong>.
+                এই <strong>৳{revertPaymentTarget.payment.amount.toLocaleString('en-BD')}</strong> পেমেন্ট জমার হিসাব থেকে বাদ যাবে। রোগীর বাকি টাকা একই পরিমাণ বাড়বে।
               </p>
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-gray-200">
-                Reason for Reversal *
+              <label htmlFor="payment-revert-reason" className="block text-xs font-bold text-gray-200">
+                বাতিলের কারণ * / Reason
               </label>
               <textarea
+                id="payment-revert-reason"
                 rows={3}
                 value={revertReason}
-                onChange={(e) => setRevertReason(e.target.value)}
-                placeholder="e.g. Accidental duplicate entry, bounced bank check, or patient refunded fees..."
+                onChange={(e) => { setRevertReason(e.target.value); setRevertError(''); }}
+                placeholder="নিজের মতো কারণ লিখুন…"
                 className="w-full glass-input rounded-xl p-3 text-xs text-gray-100 placeholder:text-gray-500 resize-none border-red-500/50 focus:border-red-500"
                 required
                 autoFocus
+                disabled={isRevertingPayment}
+                aria-invalid={Boolean(revertError)}
+                aria-describedby={revertError ? 'payment-revert-error' : undefined}
               />
+              {revertError && <p id="payment-revert-error" role="alert" className="text-xs text-red-400">{revertError}</p>}
             </div>
 
             <div className="flex justify-end gap-2.5 pt-2 border-t border-white/10">
@@ -2090,7 +2095,7 @@ export default function PatientProfilePage() {
                 onClick={() => setRevertPaymentTarget(null)}
                 disabled={isRevertingPayment}
               >
-                Keep Payment
+                বাতিল নয় / Keep
               </Button>
               <Button
                 type="submit"
@@ -2100,7 +2105,7 @@ export default function PatientProfilePage() {
                 className="bg-rose-700 hover:bg-rose-600 border-rose-600 gap-1.5"
               >
                 <Undo2 className="w-3.5 h-3.5" />
-                Confirm Reversal
+                বাতিল করুন / Revert
               </Button>
             </div>
           </form>
