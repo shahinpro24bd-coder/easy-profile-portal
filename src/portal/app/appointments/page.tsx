@@ -35,7 +35,6 @@ import { apiFetch } from '@/portal/lib/api/client';
 import {
   Appointment,
   Patient,
-  ServicePackage,
   SmsBulkSendSummary,
   SmsStatus
 } from '@/portal/shared';
@@ -56,7 +55,6 @@ export default function AppointmentsPage() {
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [packages, setPackages] = useState<ServicePackage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [search, setSearch] = useState('');
@@ -124,12 +122,8 @@ export default function AppointmentsPage() {
   useEffect(() => {
     async function loadAuxData() {
       try {
-        const [patRes, pkgRes] = await Promise.all([
-          apiFetch<Patient[]>('/patients?limit=100'),
-          apiFetch<ServicePackage[]>('/packages')
-        ]);
+        const patRes = await apiFetch<Patient[]>('/patients?limit=100');
         if (patRes.success && patRes.data) setPatients(patRes.data);
-        if (pkgRes.success && pkgRes.data) setPackages(pkgRes.data);
       } catch {}
     }
     loadAuxData();
@@ -165,10 +159,9 @@ export default function AppointmentsPage() {
       'Crown & Bridge',
       'Dental Filling'
     ];
-    const pkgCategories = packages.map((pkg: any) => pkg.name);
     const aptCategories = appointments.map((a: any) => a.category).filter(Boolean) as string[];
-    return Array.from(new Set([...defaultCategories, ...pkgCategories, ...aptCategories]));
-  }, [packages, appointments]);
+    return Array.from(new Set([...defaultCategories, ...aptCategories]));
+  }, [appointments]);
 
   const counts = useMemo(() => {
     const total = filteredAppointments.length;
@@ -344,7 +337,7 @@ export default function AppointmentsPage() {
       'Dental Extraction',
       'Crown & Bridge',
       'Dental Filling'
-    ].includes(cat) || packages.some((p: any) => p.name === cat);
+    ].includes(cat);
 
     if (isStandard) {
       setEditCategoryMode('preset');
@@ -1096,11 +1089,6 @@ export default function AppointmentsPage() {
                 <option value="Dental Extraction">Dental Extraction</option>
                 <option value="Crown & Bridge">Crown & Bridge</option>
                 <option value="Dental Filling">Dental Filling</option>
-                {packages.map((pkg) => (
-                  <option key={pkg.id || (pkg as any)._id} value={pkg.name}>
-                    {pkg.name}
-                  </option>
-                ))}
                 <option value="__custom__" className="bg-[#1e0e0e] text-red-400 font-bold">
                   ✍️ + Type Custom Procedure / Category...
                 </option>
@@ -1241,11 +1229,6 @@ export default function AppointmentsPage() {
                 <option value="Dental Extraction">Dental Extraction</option>
                 <option value="Crown & Bridge">Crown & Bridge</option>
                 <option value="Dental Filling">Dental Filling</option>
-                {packages.map((pkg) => (
-                  <option key={pkg.id || (pkg as any)._id} value={pkg.name}>
-                    {pkg.name}
-                  </option>
-                ))}
                 <option value="__custom__" className="bg-[#1e0e0e] text-red-400 font-bold">
                   ✍️ + Type Custom Procedure...
                 </option>

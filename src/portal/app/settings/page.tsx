@@ -5,7 +5,6 @@ import Link from '@/portal/shims/next-link';
 import {
   Building2,
   Layers,
-  Package,
   Palette,
   Save,
   Plus,
@@ -30,6 +29,7 @@ import { Modal } from '@/portal/components/ui/modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { useTheme } from '@/portal/lib/theme/theme-context';
 import { apiFetch } from '@/portal/lib/api/client';
+import { allowedPatientFields, isBloodGroupField } from '@/portal/lib/patient-fields';
 import { CustomFieldDefinition, CustomFieldType, ClinicSettings } from '@/portal/shared';
 
 export default function SettingsPage() {
@@ -289,7 +289,7 @@ export default function SettingsPage() {
     try {
       const res = await apiFetch<CustomFieldDefinition[]>('/custom-fields');
       if (res.success && res.data) {
-        setCustomFields(res.data);
+        setCustomFields(allowedPatientFields(res.data));
       }
     } catch {
 
@@ -341,6 +341,11 @@ export default function SettingsPage() {
     e.preventDefault();
     if (!newFieldName.trim() || !newFieldKey.trim()) {
       showToast('Field name and key are required', 'error');
+      return;
+    }
+
+    if (isBloodGroupField({ name: newFieldName, key: newFieldKey, options: newFieldOptions.split(',').map(option => option.trim()) })) {
+      showToast('এই তথ্যের অপশন রাখা হয়নি।', 'error');
       return;
     }
 
@@ -885,7 +890,7 @@ export default function SettingsPage() {
           </div>
 
           <p className="text-xs text-gray-400">
-            Define custom fields (e.g. Blood Group, Occupation, Guardian Name, Emergency Contact) that automatically appear on patient registration and profile.
+            Define custom fields (e.g. Occupation, Guardian Name, Emergency Contact) that automatically appear on patient registration and profile.
           </p>
 
           {isLoadingFields ? (
@@ -953,31 +958,11 @@ export default function SettingsPage() {
           )}
         </GlassCard>
 
-        <GlassCard className="p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-white/10 dark:border-white/10 pb-3">
-            <div className="flex items-center gap-2.5">
-              <Package className="w-4 h-4 text-red-400" />
-              <h2 className="text-sm font-bold uppercase tracking-wider">
-                5. Treatment Packages &amp; Procedures Catalog
-              </h2>
-            </div>
-            <Link href="/packages">
-              <Button variant="secondary" size="sm" className="text-xs gap-1.5">
-                <ExternalLink className="w-3.5 h-3.5" />
-                Manage Packages
-              </Button>
-            </Link>
-          </div>
-          <p className="text-xs text-gray-400">
-            Configure standard treatment packages (e.g. Root Canal, Scaling, Extraction) and pricing stored in MongoDB.
-          </p>
-        </GlassCard>
-
         <GlassCard className="p-6 space-y-5">
           <div className="flex items-center gap-2.5 border-b border-white/10 dark:border-white/10 pb-3">
             <ShieldCheck className="w-4 h-4 text-red-400" />
             <h2 className="text-sm font-bold uppercase tracking-wider">
-              6. Data Backup &amp; Restore
+              5. Data Backup &amp; Restore
             </h2>
           </div>
 
@@ -1049,7 +1034,7 @@ export default function SettingsPage() {
         <form onSubmit={handleCreateCustomField} className="space-y-4 text-xs">
           <Input
             label="Field Display Name *"
-            placeholder="e.g. Blood Group, Guardian Name, Occupation"
+            placeholder="e.g. Guardian Name, Occupation"
             value={newFieldName}
             onChange={(e) => {
               setNewFieldName(e.target.value);
@@ -1062,7 +1047,7 @@ export default function SettingsPage() {
 
           <Input
             label="Field Database Key *"
-            placeholder="e.g. blood_group"
+            placeholder="e.g. guardian_name"
             value={newFieldKey}
             onChange={(e) => setNewFieldKey(e.target.value)}
             required
