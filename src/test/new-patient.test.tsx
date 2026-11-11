@@ -11,7 +11,7 @@ vi.mock('@/portal/lib/api/client', () => ({ apiFetch: vi.fn().mockResolvedValue(
 describe('New patient form', () => {
   it('opens and allows selecting a patient complaint', async () => {
     await act(async () => { render(<NewPatientPage />); });
-    fireEvent.click(screen.getByRole('button', { name: 'দাঁতে ব্যথা Toothache', exact: true }));
+    fireEvent.click(screen.getByRole('button', { name: 'দাঁতে ব্যথা Toothache' }));
     expect(screen.getByPlaceholderText(/উপরে থেকে সমস্যা বেছে নিন/)).toHaveValue('Toothache');
   });
 });
