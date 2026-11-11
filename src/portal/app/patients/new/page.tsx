@@ -32,6 +32,7 @@ import { ToothSelector, ToothSelectorModal } from '@/portal/components/dental/to
 import { apiFetch } from '@/portal/lib/api/client';
 import { ImageMetadata } from '@/portal/shared';
 import { ProblemPicker } from '@/portal/components/patient/problem-picker';
+import { allowedPatientFields } from '@/portal/lib/patient-fields';
 
 interface DuplicatePatientInfo {
   id: string;
@@ -52,8 +53,6 @@ export default function NewPatientPage() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
-  const [village, setVillage] = useState('');
-  const [district, setDistrict] = useState('');
   const [patientProblem, setPatientProblem] = useState('');
 
   const [selectedTeeth, setSelectedTeeth] = useState<string[]>([]);
@@ -80,7 +79,7 @@ export default function NewPatientPage() {
       try {
         const res = await apiFetch<any[]>('/custom-fields');
         if (res.success && Array.isArray(res.data)) {
-          const activeDefs = res.data.filter((f: any) => f.active !== false);
+          const activeDefs = allowedPatientFields(res.data).filter((f: any) => f.active !== false);
           setCustomFieldDefs(activeDefs);
         }
       } catch {
@@ -216,8 +215,6 @@ export default function NewPatientPage() {
           phone: phone.trim(),
           email: email.trim() || undefined,
           address: address.trim() || undefined,
-          village: village.trim() || undefined,
-          district: district.trim() || undefined,
           patientProblem: finalProblem,
           selectedTeeth: selectedTeeth.length > 0 ? selectedTeeth : undefined,
           profileImage: profileImage || undefined,
@@ -240,7 +237,7 @@ export default function NewPatientPage() {
               patientName: fullName.trim(),
               phone: phone.trim(),
               age: age || undefined,
-              location: [village.trim(), district.trim()].filter(Boolean).join(', ') || undefined,
+              location: address.trim() || undefined,
               treatment: patientProblem.trim() || undefined,
               notes: `Patient #${patientNumber}`,
               paymentStatus: 'pending',
@@ -379,33 +376,13 @@ export default function NewPatientPage() {
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Input
-              label="Village / Area"
-              placeholder="e.g. Dhanmondi, Sector 3"
-              value={village}
-              onChange={(e) => setVillage(e.target.value)}
-              icon={<MapPin className="w-4 h-4" />}
-            />
-
-            <Input
-              label="District"
-              placeholder="e.g. Dhaka"
-              value={district}
-              onChange={(e) => setDistrict(e.target.value)}
-              icon={<MapPin className="w-4 h-4" />}
-            />
-
-            <div className="sm:col-span-2 lg:col-span-1">
-              <Input
-                label="Full Address / Landmark"
-                placeholder="House #12, Road #4"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                icon={<MapPin className="w-4 h-4" />}
-              />
-            </div>
-          </div>
+          <Input
+            label="লোকেশন / Location (Optional)"
+            placeholder="এলাকা বা পুরো ঠিকানা লিখুন"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            icon={<MapPin className="w-4 h-4" />}
+          />
         </GlassCard>
 
         <GlassCard className="space-y-4">

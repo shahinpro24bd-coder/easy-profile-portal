@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   Users,
   Calendar,
-  Package,
   Receipt,
   MessageSquare,
   Settings,
@@ -28,7 +27,6 @@ const navItems = [
   { name: 'Receipts', bn: 'বিল / রিসিট', href: '/receipts', icon: Receipt },
   { name: 'Accessories', bn: 'যন্ত্রপাতি', href: '/accessories', icon: Wrench },
   { name: 'Staff & Payroll', bn: 'স্টাফ ও বেতন', href: '/stuffs', icon: Briefcase },
-  { name: 'Packages', bn: 'প্যাকেজ', href: '/packages', icon: Package },
   { name: 'SMS', bn: 'এসএমএস', href: '/smsinfo', icon: MessageSquare },
   { name: 'Settings', bn: 'সেটিংস', href: '/settings', icon: Settings },
 ];

@@ -44,6 +44,7 @@ import { ToothSelector, ToothVector } from '@/portal/components/dental/tooth-sel
 import { useToast } from '@/portal/components/ui/toast';
 import { PatientQuickActions } from '@/portal/components/patient/quick-actions';
 import { apiFetch } from '@/portal/lib/api/client';
+import { allowedPatientFields } from '@/portal/lib/patient-fields';
 import { createPaymentReversalRequest } from '@/portal/lib/api/payment-reversal';
 import { Patient, ImageMetadata, Receipt, Appointment, AppointmentStatus, PatientAccountBalance, PaymentMethod, InvoicePayment } from '@/portal/shared';
 import { getAppointmentLifecycle, getDhakaDateString } from '@/portal/lib/utils/date-time';
@@ -166,7 +167,7 @@ export default function PatientProfilePage() {
       }
 
       if (fieldsRes.success && Array.isArray(fieldsRes.data)) {
-        setCustomFieldDefs(fieldsRes.data.filter((f: any) => f.active !== false));
+        setCustomFieldDefs(allowedPatientFields(fieldsRes.data).filter((f: any) => f.active !== false));
       }
     } catch {
       setErrorMessage('Unable to connect to backend server. Please verify network connection.');
@@ -853,7 +854,7 @@ export default function PatientProfilePage() {
                 <div className="pt-2 border-t border-white/5">
                   <p className="text-[10px] uppercase font-bold text-gray-500 tracking-wider mb-1.5">Custom Details</p>
                   <div className="flex flex-wrap gap-2">
-                    {patient.customFields.map((cf, idx) => {
+                    {allowedPatientFields(patient.customFields).map((cf, idx) => {
                       const def = customFieldDefs.find(d => d.key === cf.key);
                       const label = def?.name || cf.key.replace(/_/g, ' ');
                       return (

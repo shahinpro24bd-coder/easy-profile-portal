@@ -11,7 +11,6 @@ import {
   Printer,
   CreditCard,
   Clock,
-  Package as PackageIcon,
   Save,
   RotateCcw,
   Eye,
@@ -35,7 +34,7 @@ import { ReceiptDocument } from '@/portal/components/receipt/receipt-document';
 import { ToothSelector, ToothSelectorModal } from '@/portal/components/dental/tooth-selector-modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { apiFetch } from '@/portal/lib/api/client';
-import { Patient, ServicePackage, ReceiptItem, PaymentMethod, Receipt, PatientAccountBalance } from '@/portal/shared';
+import { Patient, ReceiptItem, PaymentMethod, Receipt, PatientAccountBalance } from '@/portal/shared';
 
 function ReceiptFormContent() {
   const params = useParams();
@@ -47,7 +46,6 @@ function ReceiptFormContent() {
   const isEditMode = Boolean(editParam);
 
   const [patient, setPatient] = useState<Patient | null>(null);
-  const [availablePackages, setAvailablePackages] = useState<ServicePackage[]>([]);
   const [previousDueSnapshot, setPreviousDueSnapshot] = useState<number>(0);
   const [editReceipt, setEditReceipt] = useState<Receipt | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,7 +53,6 @@ function ReceiptFormContent() {
   const [activeTab, setActiveTab] = useState<'builder' | 'preview'>('builder');
 
   const [items, setItems] = useState<ReceiptItem[]>([]);
-  const [selectedPackageId, setSelectedPackageId] = useState('');
 
   const [activeToothItemIndex, setActiveToothItemIndex] = useState<number | null>(null);
   const [customItemTeeth, setCustomItemTeeth] = useState<string[]>([]);
@@ -95,8 +92,7 @@ function ReceiptFormContent() {
       setIsLoading(true);
       try {
         const promises: Promise<any>[] = [
-          apiFetch<Patient>(`/patients/${patientNumber}`),
-          apiFetch<ServicePackage[]>('/packages')
+          apiFetch<Patient>(`/patients/${patientNumber}`)
         ];
 
         if (isEditMode && editParam) {
@@ -105,16 +101,12 @@ function ReceiptFormContent() {
           promises.push(apiFetch<PatientAccountBalance>(`/receipts/patient/${patientNumber}/balance`));
         }
 
-        const [patientRes, packagesRes, thirdRes] = await Promise.all(promises);
+        const [patientRes, thirdRes] = await Promise.all(promises);
 
         if (patientRes.success && patientRes.data) {
           setPatient(patientRes.data);
         } else {
           showToast('Failed to load patient record.', 'error');
-        }
-
-        if (packagesRes.success && packagesRes.data) {
-          setAvailablePackages(packagesRes.data);
         }
 
         if (isEditMode) {
@@ -186,38 +178,6 @@ function ReceiptFormContent() {
       } catch {}
     }
   }, [items, discount, discountType, paidAmount, paymentMethod, appointmentDate, appointmentTime, notes, patientNumber, isEditMode]);
-
-  const handleAddPackage = () => {
-    if (!selectedPackageId) return;
-
-    const pkg = availablePackages.find((p) => p.id === selectedPackageId || (p as any)._id === selectedPackageId);
-    if (!pkg) return;
-
-    const existingIndex = items.findIndex((i) => i.packageId === pkg.id || i.packageId === (pkg as any)._id);
-    if (existingIndex !== -1) {
-      const updated = [...items];
-      updated[existingIndex].quantity += 1;
-      updated[existingIndex].total = updated[existingIndex].quantity * updated[existingIndex].price;
-      setItems(updated);
-      showToast(`Increased quantity for ${pkg.name}`, 'info');
-    } else {
-      const newItem: ReceiptItem = {
-        id: `item-${Date.now()}`,
-        name: pkg.name,
-        description: pkg.description,
-        packageId: pkg.id || (pkg as any)._id,
-        price: pkg.price,
-        quantity: 1,
-        total: pkg.price,
-        teeth: []
-      };
-      setItems([...items, newItem]);
-      showToast(`Added ${pkg.name} to bill`, 'success');
-    }
-
-    setHighlightItems(false);
-    setSelectedPackageId('');
-  };
 
   const handleAddCustomItem = (e: React.FormEvent) => {
     e.preventDefault();
@@ -372,7 +332,7 @@ function ReceiptFormContent() {
     const errors: string[] = [];
 
     if (items.length === 0) {
-      errors.push('Please add at least one treatment procedure or dental package.');
+      errors.push('Please add at least one treatment procedure.');
       setHighlightItems(true);
       proceduresRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -398,7 +358,6 @@ function ReceiptFormContent() {
         items: items.map((i) => ({
           name: i.name,
           description: i.description,
-          packageId: i.packageId,
           price: i.price,
           quantity: i.quantity,
           teeth: i.teeth || []
@@ -684,7 +643,7 @@ function ReceiptFormContent() {
               >
                 <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
                   <div className="flex items-center gap-2">
-                    <PackageIcon className="w-4 h-4 text-red-600 dark:text-red-400" />
+                    <FileText className="w-4 h-4 text-red-600 dark:text-red-400" />
                     <h2 className="text-sm font-extrabold text-slate-900 dark:text-gray-100 uppercase tracking-wider">
                       Treatment Procedures & Services
                     </h2>
@@ -696,42 +655,10 @@ function ReceiptFormContent() {
                     className="text-xs gap-1.5 border-red-600/30 text-red-600 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/50"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    Custom Item
+                    চিকিৎসা যোগ করুন / Add Treatment
                   </Button>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex flex-col sm:flex-row gap-2.5">
-                    <div className="relative flex-1">
-                      <select
-                        value={selectedPackageId}
-                        onChange={(e) => setSelectedPackageId(e.target.value)}
-                        className="w-full glass-input rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-gray-100 appearance-none bg-white dark:bg-[#0e0e0e] border border-slate-200 dark:border-red-900/40 focus:border-red-500 pr-8"
-                      >
-                        <option value="" className="bg-white dark:bg-[#121212] text-slate-400 dark:text-gray-400">
-                          -- Select Treatment Package from Catalog --
-                        </option>
-                        {availablePackages.map((pkg) => (
-                          <option key={pkg.id || (pkg as any)._id} value={pkg.id || (pkg as any)._id} className="bg-white dark:bg-[#121212] text-slate-800 dark:text-gray-200">
-                            {pkg.name} — ৳{pkg.price.toLocaleString('en-BD')} ({pkg.category || 'Dental'})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <Button
-                      type="button"
-                      variant="primary"
-                      size="sm"
-                      onClick={handleAddPackage}
-                      disabled={!selectedPackageId}
-                      className="sm:w-auto gap-1.5 text-xs shrink-0 shadow-glow-red-sm"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Add to Bill
-                    </Button>
-                  </div>
-                </div>
               </GlassCard>
 
               <GlassCard className="p-5 space-y-4 relative z-10">
@@ -751,7 +678,7 @@ function ReceiptFormContent() {
                     </div>
                     <p className="text-xs text-slate-600 dark:text-gray-400 font-semibold">No treatments added yet.</p>
                     <p className="text-[11px] text-slate-400 dark:text-gray-500">
-                      Select a package above or click &ldquo;Custom Item&rdquo; to add fees.
+                      
                     </p>
                   </div>
                 ) : (

@@ -17,3 +17,5 @@
 - Portal styling uses the original Tailwind v3 config in `portal-styles/`, compiled to `public/legacy/portal.css` (linked in `__root.tsx`); `src/styles.css` must not import Tailwind v4. After adding/changing classes, regenerate per `portal-styles/README.md`. Why: v4 renders the legacy classes differently and broke the original look.
 - `/dashboard` route must wrap its page in `DashboardLayout`. Why: Next.js applied `app/dashboard/layout.tsx` implicitly.
 - Payment reversal requests are assembled in a browser-safe helper with validated payment references and both reason field aliases. Why: legacy API responses may expose `_id` instead of `id`, and reason naming differs across API versions.
+- Patient custom-field visibility and manual complaint merging use a shared browser-safe helper. Why: registration, profile and settings must apply the same field exclusions without deleting historical data.
+- Billing uses manually entered treatment items, and the retired catalog URL redirects home. Why: removing catalog UI must not prevent billing or break old bookmarks.
