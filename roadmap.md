@@ -1,0 +1,3 @@
+- [ ] Simplify new-patient address to one location input and expose manual complaint entry.
+- [ ] Remove blood-group options and package features from all screens.
+- [ ] Run focused tests and check the visible form and billing flow.
