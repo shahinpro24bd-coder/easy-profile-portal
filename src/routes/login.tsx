@@ -4,6 +4,8 @@ import Page from "@/portal/app/login/page";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Login — Luckydental" },
       { name: "description", content: "Luckydental dental care system: Login." },
       { property: "og:title", content: "Login — Luckydental" },

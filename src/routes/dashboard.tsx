@@ -5,6 +5,8 @@ import DashboardLayout from "@/portal/app/dashboard/layout";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Dashboard — Luckydental" },
       { name: "description", content: "Luckydental dental care system: Dashboard." },
       { property: "og:title", content: "Dashboard — Luckydental" },
