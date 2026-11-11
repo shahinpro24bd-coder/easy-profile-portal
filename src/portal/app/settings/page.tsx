@@ -1,7 +1,6 @@
 // @ts-nocheck -- legacy portal code ported from the original Next.js app
 
 import React, { useState, useEffect } from 'react';
-import Link from '@/portal/shims/next-link';
 import {
   Building2,
   Layers,
@@ -9,7 +8,6 @@ import {
   Save,
   Plus,
   Trash2,
-  ExternalLink,
   Sun,
   Moon,
   Check,
@@ -395,6 +393,11 @@ export default function SettingsPage() {
   const handleSaveEditField = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingField || !editFieldName.trim()) return;
+
+    if (isBloodGroupField({ name: editFieldName, key: editingField.key, options: editFieldOptions.split(',').map(option => option.trim()) })) {
+      showToast('এই তথ্যের অপশন রাখা হয়নি।', 'error');
+      return;
+    }
 
     const id = editingField.id || (editingField as any)._id;
     const optionsArray = editFieldType === 'select'

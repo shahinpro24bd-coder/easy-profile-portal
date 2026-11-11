@@ -16,7 +16,7 @@ describe('New patient form', () => {
     expect(screen.getByPlaceholderText(/উপরে থেকে সমস্যা বেছে নিন/)).toHaveValue('Toothache');
   });
   it('sends the single location as the permanent address and daily location', async () => {
-    vi.mocked(apiFetch).mockImplementation(async (path) => ({ success: true, data: path === '/patients' ? { patientNumber: 123 } : [] }));
+    vi.mocked(apiFetch).mockImplementation(async (path) => ({ success: true, status: 200, data: path === '/patients' ? { patientNumber: 123 } : [] }));
     await act(async () => { render(<NewPatientPage />); });
     fireEvent.change(screen.getByLabelText('Full Name *'), { target: { value: 'Test Patient' } });
     fireEvent.change(screen.getByLabelText('Age *'), { target: { value: '25' } });
@@ -24,7 +24,7 @@ describe('New patient form', () => {
     fireEvent.change(screen.getByLabelText('লোকেশন / Location (Optional)'), { target: { value: 'কুষ্টিয়া' } });
     fireEvent.change(screen.getByLabelText('নিজে সমস্যা লিখুন / Add manually'), { target: { value: 'দাঁতে পুঁজ' } });
     fireEvent.click(screen.getByRole('button', { name: 'যোগ করুন' }));
-    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Save Patient', exact: true })); });
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: /^Save Patient$/ })); });
     const calls = vi.mocked(apiFetch).mock.calls;
     const permanent = calls.find(([path]) => path === '/patients');
     const daily = calls.find(([path]) => path === '/daily-patients');
