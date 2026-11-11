@@ -1,5 +1,8 @@
-import React from 'react';
-import { Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, Plus } from 'lucide-react';
+import { Button } from '@/portal/components/ui/button';
+import { Input } from '@/portal/components/ui/input';
+import { appendPatientProblem } from '@/portal/lib/patient-fields';
 
 export const COMMON_PROBLEMS: { en: string; bn: string }[] = [
   { en: 'Toothache', bn: 'দাঁতে ব্যথা' },
@@ -28,6 +31,7 @@ const split = (v: string) => v.split(',').map((s) => s.trim()).filter(Boolean);
 
 /** Click a chip to add/remove a common problem in the complaint text (no typing needed). */
 export const ProblemPicker: React.FC<{ value: string; onChange: (v: string) => void }> = ({ value, onChange }) => {
+  const [manualProblem, setManualProblem] = useState('');
   const parts = split(value);
   const has = (en: string) => parts.some((p) => p.toLowerCase() === en.toLowerCase());
   const toggle = (en: string) => {
@@ -37,9 +41,6 @@ export const ProblemPicker: React.FC<{ value: string; onChange: (v: string) => v
 
   return (
     <div className="space-y-1.5">
-      <p className="text-[11px] text-gray-400">
-        সমস্যাটি ক্লিক করুন — লিখতে হবে না <span className="text-gray-500">(Tap to select, tap again to remove)</span>
-      </p>
       <div className="flex flex-wrap gap-2">
         {COMMON_PROBLEMS.map((p) => {
           const on = has(p.en);
@@ -60,6 +61,26 @@ export const ProblemPicker: React.FC<{ value: string; onChange: (v: string) => v
             </button>
           );
         })}
+      </div>
+      <div className="flex items-end gap-2">
+        <Input
+          label="নিজে সমস্যা লিখুন / Add manually"
+          placeholder="সমস্যার নাম লিখুন"
+          value={manualProblem}
+          onChange={(event) => setManualProblem(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            onChange(appendPatientProblem(value, manualProblem));
+            setManualProblem('');
+          }}
+        />
+        <Button type="button" variant="outline" disabled={!manualProblem.trim()} onClick={() => {
+          onChange(appendPatientProblem(value, manualProblem));
+          setManualProblem('');
+        }} className="shrink-0 gap-1.5">
+          <Plus className="w-4 h-4" /> যোগ করুন
+        </Button>
       </div>
     </div>
   );
