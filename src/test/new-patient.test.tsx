@@ -24,7 +24,7 @@ describe('New patient form', () => {
     fireEvent.change(screen.getByLabelText('লোকেশন / Location (Optional)'), { target: { value: 'কুষ্টিয়া' } });
     fireEvent.change(screen.getByLabelText('নিজে সমস্যা লিখুন / Add manually'), { target: { value: 'দাঁতে পুঁজ' } });
     fireEvent.click(screen.getByRole('button', { name: 'যোগ করুন' }));
-    await act(async () => { fireEvent.click(screen.getByRole('button', { name: /Save Patient Only/ })); });
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Save Patient', exact: true })); });
     const calls = vi.mocked(apiFetch).mock.calls;
     const permanent = calls.find(([path]) => path === '/patients');
     const daily = calls.find(([path]) => path === '/daily-patients');
