@@ -31,6 +31,7 @@ import { useToast } from '@/portal/components/ui/toast';
 import { ToothSelector, ToothSelectorModal } from '@/portal/components/dental/tooth-selector-modal';
 import { apiFetch } from '@/portal/lib/api/client';
 import { ImageMetadata } from '@/portal/shared';
+import { ProblemPicker } from '@/portal/components/patient/problem-picker';
 
 interface DuplicatePatientInfo {
   id: string;
