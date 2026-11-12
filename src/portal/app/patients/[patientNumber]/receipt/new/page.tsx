@@ -636,17 +636,19 @@ function ReceiptFormContent() {
               </GlassCard>
 
               <GlassCard
-                className={`p-5 space-y-4 relative z-20 transition-all ${
+                className={`p-5 space-y-4 relative z-10 transition-all ${
                   highlightItems ? 'ring-2 ring-red-500 border-red-500' : ''
                 }`}
                 ref={proceduresRef}
               >
-                <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-red-600 dark:text-red-400" />
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-white/10 pb-3">
+                  <div className="space-y-1">
                     <h2 className="text-sm font-extrabold text-slate-900 dark:text-gray-100 uppercase tracking-wider">
-                      Treatment Procedures & Services
+                      Selected Items ({items.length})
                     </h2>
+                    <p className="text-xs font-mono font-bold text-slate-600 dark:text-gray-400">
+                      Subtotal: ৳{subtotal.toLocaleString('en-BD')}
+                    </p>
                   </div>
                   <Button
                     variant="outline"
@@ -657,18 +659,6 @@ function ReceiptFormContent() {
                     <Plus className="w-3.5 h-3.5" />
                     চিকিৎসা যোগ করুন / Add Treatment
                   </Button>
-                </div>
-
-              </GlassCard>
-
-              <GlassCard className="p-5 space-y-4 relative z-10">
-                <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-3">
-                  <h2 className="text-sm font-extrabold text-slate-900 dark:text-gray-100 uppercase tracking-wider">
-                    Selected Items ({items.length})
-                  </h2>
-                  <span className="text-xs font-mono font-bold text-slate-600 dark:text-gray-400">
-                    Subtotal: ৳{subtotal.toLocaleString('en-BD')}
-                  </span>
                 </div>
 
                 {items.length === 0 ? (
