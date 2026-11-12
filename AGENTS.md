@@ -18,4 +18,5 @@
 - `/dashboard` route must wrap its page in `DashboardLayout`. Why: Next.js applied `app/dashboard/layout.tsx` implicitly.
 - Payment reversal requests are assembled in a browser-safe helper with validated payment references and both reason field aliases. Why: legacy API responses may expose `_id` instead of `id`, and reason naming differs across API versions.
 - Patient custom-field visibility and manual complaint merging use a shared browser-safe helper. Why: registration, profile and settings must apply the same field exclusions without deleting historical data.
-- Billing uses manually entered treatment items, and the retired catalog URL redirects home. Why: removing catalog UI must not prevent billing or break old bookmarks.
+- New invoices accept a direct total, mapped to one generic item by a browser-safe helper for legacy API compatibility; existing itemized invoices retain their edit controls. Why: simplify new billing without losing historical line items or changing the clinic API.
+- The retired catalog URL redirects home. Why: preserve old bookmarks without exposing retired features.
