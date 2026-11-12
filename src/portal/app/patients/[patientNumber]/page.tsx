@@ -719,15 +719,6 @@ export default function PatientProfilePage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handleCopyPublicLink}
-                  className="text-xs gap-1.5 border-emerald-700/50 text-emerald-400 hover:text-emerald-300 hover:border-emerald-500"
-                >
-                  {copiedPublicLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  {copiedPublicLink ? 'Copied' : 'Copy Link'}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
                   onClick={() => setShowMakePrivateConfirm(true)}
                   disabled={isTogglingShare}
                   className="text-xs gap-1.5 border-red-800/40 text-red-400 hover:text-red-300"
@@ -750,37 +741,8 @@ export default function PatientProfilePage() {
               </Button>
             )}
 
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleOpenEdit}
-              className="text-xs gap-1.5"
-            >
-              <Edit3 className="w-3.5 h-3.5" />
-              Edit Profile
-            </Button>
-            <Link href={`/patients/${patient.patientNumber}/receipt/new`}>
-              <Button variant="primary" size="sm" className="text-xs gap-1.5 shadow-glow-red">
-                <ReceiptIcon className="w-3.5 h-3.5" />
-                New Invoice
-              </Button>
-            </Link>
           </div>
         </div>
-
-        <PatientQuickActions
-          patientNumber={patient.patientNumber}
-          phone={patient.phone}
-          hasDue={Boolean(accountBalance?.outstandingDue)}
-          onPayment={() => {
-            setPaymentAmount(accountBalance?.outstandingDue ? String(accountBalance.outstandingDue) : '');
-            setShowPaymentModal(true);
-          }}
-          onAppointment={() => setShowAppointmentModal(true)}
-          onEdit={handleOpenEdit}
-          onShare={() => (patient.isPublic ? handleCopyPublicLink() : handleTogglePublic(true))}
-          onDelete={() => setShowDeleteModal(true)}
-        />
 
         <GlassCard className="p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
@@ -871,6 +833,20 @@ export default function PatientProfilePage() {
           </div>
         </GlassCard>
 
+        <PatientQuickActions
+          patientNumber={patient.patientNumber}
+          phone={patient.phone}
+          hasDue={Boolean(accountBalance?.outstandingDue)}
+          onPayment={() => {
+            setPaymentAmount(accountBalance?.outstandingDue ? String(accountBalance.outstandingDue) : '');
+            setShowPaymentModal(true);
+          }}
+          onAppointment={() => setShowAppointmentModal(true)}
+          onEdit={handleOpenEdit}
+          onShare={() => (patient.isPublic ? handleCopyPublicLink() : handleTogglePublic(true))}
+          onDelete={() => setShowDeleteModal(true)}
+        />
+
         <GlassCard className="p-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
             <div>
@@ -879,30 +855,6 @@ export default function PatientProfilePage() {
                 Patient Billing Account & Outstanding Balance
               </h3>
               <p className="text-xs text-gray-400 mt-0.5">Multi-visit ledger reconciliation & cash collection history</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => {
-                  if (accountBalance?.outstandingDue) {
-                    setPaymentAmount(String(accountBalance.outstandingDue));
-                  } else {
-                    setPaymentAmount('');
-                  }
-                  setShowPaymentModal(true);
-                }}
-                className="text-xs gap-1.5"
-              >
-                <CreditCard className="w-3.5 h-3.5 text-emerald-400" />
-                Record Payment
-              </Button>
-              <Link href={`/patients/${patient.patientNumber}/receipt/new`}>
-                <Button variant="primary" size="sm" className="text-xs gap-1.5 shadow-glow-red">
-                  <Plus className="w-3.5 h-3.5" />
-                  New Invoice
-                </Button>
-              </Link>
             </div>
           </div>
 
@@ -938,24 +890,12 @@ export default function PatientProfilePage() {
                 Appointments & Consultations ({appointments.length})
               </h3>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowAppointmentModal(true)}
-              className="text-xs gap-1.5 border-red-800/40 text-red-300 hover:bg-red-950/40"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              Add Appointment
-            </Button>
           </div>
 
           {appointments.length === 0 ? (
             <div className="text-center py-8 space-y-3 border border-dashed border-white/10 rounded-xl">
               <CalendarIcon className="w-8 h-8 text-gray-600 mx-auto" />
               <p className="text-xs text-gray-400">No appointments scheduled for this patient yet</p>
-              <Button variant="outline" size="sm" onClick={() => setShowAppointmentModal(true)} className="text-xs">
-                Schedule First Appointment
-              </Button>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -1046,23 +986,12 @@ export default function PatientProfilePage() {
                 Luckydental Invoices & Receipts ({receipts.length})
               </h3>
             </div>
-            <Link href={`/patients/${patient.patientNumber}/receipt/new`}>
-              <Button variant="primary" size="sm" className="text-xs gap-1.5 shadow-glow-red">
-                <Plus className="w-3.5 h-3.5" />
-                New Invoice
-              </Button>
-            </Link>
           </div>
 
           {receipts.length === 0 ? (
             <div className="text-center py-8 space-y-3 border border-dashed border-white/10 rounded-xl">
               <ReceiptIcon className="w-8 h-8 text-gray-600 mx-auto" />
               <p className="text-xs text-gray-400">No receipts generated yet for this patient</p>
-              <Link href={`/patients/${patient.patientNumber}/receipt/new`}>
-                <Button variant="outline" size="sm" className="text-xs">
-                  Create First Invoice
-                </Button>
-              </Link>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -1210,18 +1139,6 @@ export default function PatientProfilePage() {
                   Payment Transactions Ledger
                 </h3>
               </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => {
-                  if (accountBalance?.outstandingDue) setPaymentAmount(String(accountBalance.outstandingDue));
-                  setShowPaymentModal(true);
-                }}
-                className="text-xs gap-1.5"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                Record Payment
-              </Button>
             </div>
 
             <div className="overflow-x-auto">
