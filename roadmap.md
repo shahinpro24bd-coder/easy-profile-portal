@@ -1,3 +1,4 @@
 - [x] Simplify new-patient address to one location input and expose manual complaint entry.
 - [x] Remove blood-group options and package features from all screens.
 - [x] Run focused tests and check the visible form and billing flow (mocked clinic responses; live saving unavailable without a clinic session).
+- [ ] Replace new-invoice item selection with a direct total and verify billing calculations and submission.
