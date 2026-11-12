@@ -34,6 +34,7 @@ import { ReceiptDocument } from '@/portal/components/receipt/receipt-document';
 import { ToothSelector, ToothSelectorModal } from '@/portal/components/dental/tooth-selector-modal';
 import { useToast } from '@/portal/components/ui/toast';
 import { apiFetch } from '@/portal/lib/api/client';
+import { totalOnlyInvoiceItems } from '@/portal/lib/invoice-total';
 import { Patient, ReceiptItem, PaymentMethod, Receipt, PatientAccountBalance } from '@/portal/shared';
 
 function ReceiptFormContent() {
@@ -53,6 +54,8 @@ function ReceiptFormContent() {
   const [activeTab, setActiveTab] = useState<'builder' | 'preview'>('builder');
 
   const [items, setItems] = useState<ReceiptItem[]>([]);
+  const [billTotal, setBillTotal] = useState('');
+  const invoiceItems = isEditMode ? items : totalOnlyInvoiceItems(billTotal);
 
   const [activeToothItemIndex, setActiveToothItemIndex] = useState<number | null>(null);
   const [customItemTeeth, setCustomItemTeeth] = useState<string[]>([]);
@@ -137,7 +140,8 @@ function ReceiptFormContent() {
             const savedDraft = localStorage.getItem(`luckydental_receipt_draft_${patientNumber}`);
             if (savedDraft) {
               const parsed = JSON.parse(savedDraft);
-              if (parsed.items && Array.isArray(parsed.items) && parsed.items.length > 0) setItems(parsed.items);
+              if (parsed.billTotal !== undefined) setBillTotal(String(parsed.billTotal));
+              else if (Array.isArray(parsed.items)) setBillTotal(String(parsed.items.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.quantity) || 1), 0) || '')); 
               if (parsed.discount !== undefined) setDiscount(parsed.discount);
               if (parsed.discountType) setDiscountType(parsed.discountType);
               if (parsed.paidAmount !== undefined) setPaidAmount(parsed.paidAmount);
@@ -169,15 +173,15 @@ function ReceiptFormContent() {
   }, [patientNumber, editParam, isEditMode, showToast]);
 
   useEffect(() => {
-    if (!isEditMode && (items.length > 0 || Number(paidAmount) > 0 || notes || appointmentDate)) {
+    if (!isEditMode && (Number(billTotal) > 0 || Number(paidAmount) > 0 || notes || appointmentDate)) {
       try {
         localStorage.setItem(
           `luckydental_receipt_draft_${patientNumber}`,
-          JSON.stringify({ items, discount, discountType, paidAmount, paymentMethod, appointmentDate, appointmentTime, notes })
+          JSON.stringify({ billTotal, discount, discountType, paidAmount, paymentMethod, appointmentDate, appointmentTime, notes })
         );
       } catch {}
     }
-  }, [items, discount, discountType, paidAmount, paymentMethod, appointmentDate, appointmentTime, notes, patientNumber, isEditMode]);
+  }, [billTotal, discount, discountType, paidAmount, paymentMethod, appointmentDate, appointmentTime, notes, patientNumber, isEditMode]);
 
   const handleAddCustomItem = (e: React.FormEvent) => {
     e.preventDefault();
@@ -233,6 +237,7 @@ function ReceiptFormContent() {
       showToast('Reset back to saved invoice state', 'info');
     } else {
       setItems([]);
+      setBillTotal('');
       setDiscount('0');
       setPaidAmount('0');
       setNotes('');
@@ -253,8 +258,8 @@ function ReceiptFormContent() {
   };
 
   const subtotal = useMemo(() => {
-    return items.reduce((acc, item) => acc + getItemTotal(item), 0);
-  }, [items]);
+    return invoiceItems.reduce((acc, item) => acc + getItemTotal(item), 0);
+  }, [items, billTotal, isEditMode]);
 
   const discountAmount = useMemo(() => {
     const d = Math.max(0, Number(discount) || 0);
@@ -301,7 +306,7 @@ function ReceiptFormContent() {
       patientProblem: patient?.patientProblem,
       appointmentDate: appointmentDate || undefined,
       appointmentTime: appointmentTime || undefined,
-      items: items.map((item) => ({ ...item, total: getItemTotal(item) })),
+      items: invoiceItems.map((item) => ({ ...item, total: getItemTotal(item) })),
       subtotal,
       discount: discountAmount,
       discountType,
@@ -319,7 +324,7 @@ function ReceiptFormContent() {
       createdAt: paymentDateToIso(billDate) || editReceipt?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-  }, [editReceipt, isEditMode, previousDueSnapshot, patient, patientNumber, appointmentDate, appointmentTime, items, subtotal, discountAmount, discountType, visitTotal, totalPayable, paidNum, dueAmount, paymentMethod, notes, billDate]);
+  }, [editReceipt, isEditMode, previousDueSnapshot, patient, patientNumber, appointmentDate, appointmentTime, items, billTotal, subtotal, discountAmount, discountType, visitTotal, totalPayable, paidNum, dueAmount, paymentMethod, notes, billDate]);
 
   const handleSaveReceipt = async (triggerPrint = false) => {
     if (submittingRef.current || isSubmitting) return;
@@ -331,8 +336,8 @@ function ReceiptFormContent() {
 
     const errors: string[] = [];
 
-    if (items.length === 0) {
-      errors.push('Please add at least one treatment procedure.');
+    if (invoiceItems.length === 0) {
+      errors.push(isEditMode ? 'Please add at least one treatment procedure.' : 'বিলের মোট টাকা লিখুন।');
       setHighlightItems(true);
       proceduresRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -355,7 +360,7 @@ function ReceiptFormContent() {
     try {
       const payload = {
         patientNumber: Number(patientNumber),
-        items: items.map((i) => ({
+        items: invoiceItems.map((i) => ({
           name: i.name,
           description: i.description,
           price: i.price,
@@ -635,6 +640,7 @@ function ReceiptFormContent() {
                 )}
               </GlassCard>
 
+              {isEditMode && (
               <GlassCard
                 className={`p-5 space-y-4 relative z-10 transition-all ${
                   highlightItems ? 'ring-2 ring-red-500 border-red-500' : ''
@@ -776,6 +782,7 @@ function ReceiptFormContent() {
                   </div>
                 )}
               </GlassCard>
+              )}
             </div>
 
             <div className="space-y-6">
@@ -789,10 +796,28 @@ function ReceiptFormContent() {
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center text-xs text-slate-600 dark:text-gray-300">
-                  <span>Subtotal (This Visit):</span>
-                  <span className="font-mono font-bold text-slate-900 dark:text-gray-100">৳{subtotal.toLocaleString('en-BD')}</span>
-                </div>
+                {isEditMode ? (
+                  <div className="flex justify-between items-center text-xs text-slate-600 dark:text-gray-300">
+                    <span>Subtotal (This Visit):</span>
+                    <span className="font-mono font-bold text-slate-900 dark:text-gray-100">৳{subtotal.toLocaleString('en-BD')}</span>
+                  </div>
+                ) : (
+                  <div ref={proceduresRef}>
+                    <Input
+                      label="বিলের মোট টাকা / Bill Total (৳)"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="0"
+                      value={billTotal}
+                      onChange={(e) => {
+                        setBillTotal(e.target.value);
+                        setHighlightItems(false);
+                      }}
+                      className={`font-mono text-right ${highlightItems ? 'border-red-500 ring-2 ring-red-500/30' : ''}`}
+                    />
+                  </div>
+                )}
 
                 <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-white/5">
                   <div className="flex items-center justify-between">
