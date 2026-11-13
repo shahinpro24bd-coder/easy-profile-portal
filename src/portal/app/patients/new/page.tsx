@@ -357,12 +357,11 @@ export default function NewPatientPage() {
 
             <div className="sm:col-span-2">
               <Input
-                label="Email Address (Optional)"
-                type="email"
-                placeholder="patient@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                icon={<Mail className="w-4 h-4" />}
+                label="লোকেশন / Location (Optional)"
+                placeholder="এলাকা বা পুরো ঠিকানা লিখুন"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                icon={<MapPin className="w-4 h-4" />}
               />
             </div>
           </div>
@@ -370,18 +369,19 @@ export default function NewPatientPage() {
 
         <GlassCard className="space-y-4">
           <div className="flex items-center gap-2 border-b border-white/10 pb-3">
-            <MapPin className="w-4 h-4 text-red-400" />
+            <Mail className="w-4 h-4 text-red-400" />
             <h3 className="text-xs font-bold text-gray-100 uppercase tracking-wider">
-              2. Location & Address Details (Optional)
+              2. ইমেইল / Email (Optional)
             </h3>
           </div>
 
           <Input
-            label="লোকেশন / Location (Optional)"
-            placeholder="এলাকা বা পুরো ঠিকানা লিখুন"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            icon={<MapPin className="w-4 h-4" />}
+            label="Email Address (Optional)"
+            type="email"
+            placeholder="patient@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            icon={<Mail className="w-4 h-4" />}
           />
         </GlassCard>
 
