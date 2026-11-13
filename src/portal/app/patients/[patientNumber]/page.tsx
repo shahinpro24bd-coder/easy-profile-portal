@@ -48,7 +48,8 @@ import { allowedPatientFields } from '@/portal/lib/patient-fields';
 import { createPaymentReversalRequest } from '@/portal/lib/api/payment-reversal';
 import { Patient, ImageMetadata, Receipt, Appointment, AppointmentStatus, PatientAccountBalance, PaymentMethod, InvoicePayment } from '@/portal/shared';
 import { getAppointmentLifecycle, getDhakaDateString } from '@/portal/lib/utils/date-time';
-import { PaymentDateField, paymentDateToIso } from '@/portal/components/patient/payment-date-field';
+import { PaymentDateField } from '@/portal/components/patient/payment-date-field';
+import { transactionDateFields, getPaymentDate, getReceiptDate, clinicDay, formatTransactionDate } from '@/portal/lib/transaction-dates';
 
 export default function PatientProfilePage() {
   const params = useParams();
@@ -319,12 +320,15 @@ export default function PatientProfilePage() {
           receiptNumber: paymentReceiptNumber === 'auto' ? undefined : Number(paymentReceiptNumber),
           transactionId: paymentTransactionId.trim() || undefined,
           notes: paymentNotes.trim() || undefined,
-          paymentDate: paymentDateToIso(paymentDate),
-          date: paymentDateToIso(paymentDate)
+          ...transactionDateFields(paymentDate)
         })
       });
       if (res.success) {
-        showToast('Payment recorded and allocated successfully', 'success');
+        const readback = await apiFetch<Receipt[]>(`/receipts/patient/${patientNumber}`);
+        const previousIds = new Set(receipts.flatMap(r => (r.payments || []).map(p => p.id || p._id)));
+        const addedPayments = (readback.data || []).flatMap(r => r.payments || []).filter(p => !previousIds.has(p.id || p._id));
+        const dateVerified = addedPayments.length > 0 && addedPayments.every(p => clinicDay(getPaymentDate(p)) === paymentDate);
+        showToast(dateVerified ? 'পেমেন্ট আপনার বেছে নেওয়া তারিখে সেভ হয়েছে।' : 'টাকা সেভ হয়েছে, কিন্তু ক্লিনিকের সিস্টেমে বেছে নেওয়া তারিখ নিশ্চিত হয়নি। আবার টাকা যোগ করবেন না।', dateVerified ? 'success' : 'error');
         setShowPaymentModal(false);
         setPaymentAmount('');
         setPaymentNotes('');
@@ -348,8 +352,8 @@ export default function PatientProfilePage() {
     setEditPayTransactionId(payment.transactionId || '');
     setEditPayNotes(payment.notes || '');
     setEditPayReason('');
-    const pd = payment.paymentDate || payment.date || payment.createdAt;
-    setEditPayDate(pd ? getDhakaDateString(new Date(pd)) : getDhakaDateString());
+    const pd = getPaymentDate(payment);
+    setEditPayDate(clinicDay(pd) || getDhakaDateString());
   };
 
   const handleSaveEditPayment = async (e: React.FormEvent) => {
@@ -367,21 +371,24 @@ export default function PatientProfilePage() {
 
     setIsSavingEditPayment(true);
     try {
-      const res = await apiFetch(`/receipts/${editPaymentTarget.receiptNumber}/payments/${editPaymentTarget.payment.id}`, {
+      const res = await apiFetch(`/receipts/${editPaymentTarget.receiptNumber}/payments/${editPaymentTarget.payment.id || editPaymentTarget.payment._id}`, {
         method: 'PUT',
         body: JSON.stringify({
           amount: amt,
           paymentMethod: editPayMethod,
           transactionId: editPayTransactionId.trim() || undefined,
           notes: editPayNotes.trim() || undefined,
-          paymentDate: paymentDateToIso(editPayDate),
-          date: paymentDateToIso(editPayDate),
+          ...transactionDateFields(editPayDate),
           reason: editPayReason.trim()
         })
       });
 
       if (res.success) {
-        showToast('Payment modified and audit history recorded', 'success');
+        const readback = await apiFetch<Receipt>(`/receipts/${editPaymentTarget.receiptNumber}`);
+        const paymentId = editPaymentTarget.payment.id || editPaymentTarget.payment._id;
+        const savedPayment = readback.data?.payments?.find(p => (p.id || p._id) === paymentId);
+        const dateVerified = savedPayment && clinicDay(getPaymentDate(savedPayment)) === editPayDate;
+        showToast(dateVerified ? 'পেমেন্টের তারিখ ও তথ্য সেভ হয়েছে।' : 'পেমেন্ট বদলেছে, কিন্তু ক্লিনিকের সিস্টেমে বেছে নেওয়া তারিখ নিশ্চিত হয়নি।', dateVerified ? 'success' : 'error');
         setEditPaymentTarget(null);
         fetchPatientData();
       } else {
@@ -511,7 +518,7 @@ export default function PatientProfilePage() {
     setEditAptDate(apt.appointmentDate);
     setEditAptTime(apt.appointmentTime);
     setEditAptCategory(apt.category || 'General Consultation');
-    setEditAptStatus(apt.status);
+    setEditAptStatus(getAppointmentLifecycle(apt.appointmentDate, apt.appointmentTime, apt.status));
     setEditAptNotes(apt.notes || '');
     setShowEditAptModal(true);
   };
@@ -930,7 +937,7 @@ export default function PatientProfilePage() {
                               ? 'bg-red-950/80 text-red-400 border border-red-800/50'
                               : 'bg-blue-950/80 text-blue-300 border border-blue-800/50'
                           }`}>
-                            {effectiveStatus === 'completed' ? 'Completed / Past' : effectiveStatus}
+                            {effectiveStatus === 'completed' ? 'Completed' : effectiveStatus === 'cancelled' ? 'বাতিল · Cancelled' : effectiveStatus}
                           </span>
                         </td>
                         <td className="py-3 text-right">
@@ -945,6 +952,11 @@ export default function PatientProfilePage() {
                               <Edit3 className="w-3.5 h-3.5" />
                               Edit
                             </Button>
+                            {effectiveStatus !== 'completed' && (
+                              <Button variant="ghost" size="sm" onClick={() => handleUpdateAptStatus(apt.id || apt._id, 'completed')} className="h-7 px-2 text-[11px] gap-1">
+                                <Check className="w-3.5 h-3.5" /> এসেছেন · Completed
+                              </Button>
+                            )}
                             {effectiveStatus === 'upcoming' && (
                               <Button
                                 variant="ghost"
@@ -1023,7 +1035,7 @@ export default function PatientProfilePage() {
                           #{rec.receiptNumber}
                         </td>
                         <td className="py-3 text-gray-400">
-                          {new Date(rec.createdAt).toLocaleDateString('en-GB')}
+                          {formatTransactionDate(getReceiptDate(rec))}
                         </td>
                         <td className="py-3 text-gray-300">
                           <div>{rec.items?.length || 0} procedure(s)</div>
@@ -1158,15 +1170,15 @@ export default function PatientProfilePage() {
                 <tbody className="divide-y divide-white/5">
                   {receipts
                     .flatMap((r) => (r.payments || []).map((p) => ({ ...p, receiptNumber: r.receiptNumber })))
-                    .sort((a, b) => new Date(b.paymentDate || b.date || b.createdAt || 0).getTime() - new Date(a.paymentDate || a.date || a.createdAt || 0).getTime())
+                    .sort((a, b) => new Date(getPaymentDate(b) || 0).getTime() - new Date(getPaymentDate(a) || 0).getTime())
                     .map((pay, pIdx) => {
-                      const payDate = pay.paymentDate || pay.date || pay.createdAt;
+                      const payDate = getPaymentDate(pay);
                       const isReversed = pay.status === 'reversed';
                       const auditCount = pay.auditTrail?.length || 0;
                       return (
                         <tr key={pay.id || pIdx} className={`hover:bg-white/[0.02] ${isReversed ? 'opacity-60 bg-red-950/10' : ''}`}>
                           <td className="py-2.5 text-gray-400 whitespace-nowrap">
-                            <div>{payDate ? new Date(payDate).toLocaleDateString('en-GB') : '—'}</div>
+                            <div>{formatTransactionDate(payDate)}</div>
                             {pay.paymentTime && <div className="text-[10px] text-gray-500">{pay.paymentTime}</div>}
                           </td>
                           <td className="py-2.5 font-mono font-bold text-red-400">#{pay.receiptNumber}</td>

@@ -21,6 +21,7 @@ import { Modal } from '@/portal/components/ui/modal';
 import { apiFetch } from '@/portal/lib/api/client';
 import { ReceiptDocument } from '@/portal/components/receipt/receipt-document';
 import { Receipt } from '@/portal/shared';
+import { getReceiptDate, formatTransactionDate } from '@/portal/lib/transaction-dates';
 
 export default function ReceiptsPage() {
   const [receipts, setReceipts] = useState<Receipt[]>([]);
@@ -142,7 +143,7 @@ export default function ReceiptsPage() {
                         #{rec.receiptNumber}
                       </td>
                       <td className="py-4 px-5 text-gray-400 font-mono">
-                        {new Date(rec.createdAt).toLocaleDateString('en-GB')}
+                        {formatTransactionDate(getReceiptDate(rec))}
                       </td>
                       <td className="py-4 px-5">
                         <Link href={`/patients/${rec.patientNumber}`} className="group block">
