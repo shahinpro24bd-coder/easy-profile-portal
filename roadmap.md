@@ -2,3 +2,6 @@
 - [x] Remove blood-group options and package features from all screens.
 - [x] Run focused tests and check the visible form and billing flow (mocked clinic responses; live saving unavailable without a clinic session).
 - [x] Replace new-invoice item selection with a direct total; tests and mocked submission verified (live clinic saving requires a clinic session).
+- [ ] Correct selected payment/bill dates across saving and display; detect clinic responses that ignore the selected date.
+- [ ] Stop treating elapsed visits as completed and collect cancelled/missed visits in an all-date section.
+- [ ] Run focused tests and verify payment and cancellation screens; report any live-clinic verification blocker.
