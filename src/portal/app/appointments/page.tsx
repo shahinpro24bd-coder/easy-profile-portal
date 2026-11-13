@@ -784,7 +784,7 @@ export default function AppointmentsPage() {
               </div>
             </GlassCard>
 
-            <GlassCard className="p-5 border border-red-900/40 bg-gradient-to-r from-red-950/40 via-black/60 to-red-950/40 shadow-glow-red-sm">
+            {view === 'schedule' && <GlassCard className="p-5 border border-red-900/40 bg-gradient-to-r from-red-950/40 via-black/60 to-red-950/40 shadow-glow-red-sm">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
 
                 <div className="flex flex-wrap items-center gap-4 text-xs">
@@ -829,7 +829,7 @@ export default function AppointmentsPage() {
                   </Button>
                 </div>
               </div>
-            </GlassCard>
+            </GlassCard>}
           </div>
         )}
       </div>

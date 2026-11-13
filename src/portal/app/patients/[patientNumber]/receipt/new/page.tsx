@@ -27,7 +27,7 @@ import { Button } from '@/portal/components/ui/button';
 import { Input } from '@/portal/components/ui/input';
 import { Modal } from '@/portal/components/ui/modal';
 import { DatePicker } from '@/portal/components/ui/date-picker';
-import { PaymentDateField, paymentDateToIso } from '@/portal/components/patient/payment-date-field';
+import { PaymentDateField } from '@/portal/components/patient/payment-date-field';
 import { transactionDateFields, getReceiptDate, clinicDay } from '@/portal/lib/transaction-dates';
 import { getDhakaDateString } from '@/portal/lib/utils/date-time';
 import { TimePicker } from '@/portal/components/ui/time-picker';
@@ -397,15 +397,14 @@ function ReceiptFormContent() {
         const readback = await apiFetch<Receipt>(`/receipts/${receipt.receiptNumber}`);
         const saved = readback.success && readback.data ? readback.data : receipt;
         setSavedReceipt(saved);
-        if (clinicDay(getReceiptDate(saved)) !== billDate || (saved.payments || []).some(p => clinicDay(p.paymentDate || p.paidAt || p.date || p.createdAt || '') !== billDate)) {
+        try {
+          localStorage.removeItem(`luckydental_receipt_draft_${patientNumber}`);
+        } catch {}
+        if (clinicDay(getReceiptDate(saved)) !== billDate || (!isEditMode && (saved.payments || []).some(p => clinicDay(p.paymentDate || p.paidAt || p.date || p.createdAt || '') !== billDate))) {
           showToast('বিল সেভ হয়েছে, কিন্তু ক্লিনিকের সিস্টেমে বেছে নেওয়া তারিখ নিশ্চিত হয়নি। আবার বিল তৈরি করবেন না।', 'error');
           setShowPrintModal(true);
           return;
         }
-
-        try {
-          localStorage.removeItem(`luckydental_receipt_draft_${patientNumber}`);
-        } catch {}
 
         const recNum = receipt.receiptNumber || receipt.id || '';
         showToast(
