@@ -19,6 +19,7 @@ import { Modal } from '@/portal/components/ui/modal';
 import { ReceiptDocument } from '@/portal/components/receipt/receipt-document';
 import { apiFetch } from '@/portal/lib/api/client';
 import { Receipt } from '@/portal/shared';
+import { getReceiptDate, formatTransactionDate } from '@/portal/lib/transaction-dates';
 
 export default function PublicPatientProfilePage() {
   const params = useParams();
@@ -179,7 +180,7 @@ export default function PublicPatientProfilePage() {
                     </div>
 
                     <p className="text-gray-400 text-[11px]">
-                      Issued: {new Date(rec.createdAt).toLocaleDateString('en-GB')}
+                      Issued: {formatTransactionDate(getReceiptDate(rec))}
                       {rec.appointmentDate && ` • Appt: ${rec.appointmentDate} (${rec.appointmentTime || ''})`}
                     </p>
 
