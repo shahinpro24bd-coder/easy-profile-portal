@@ -9,6 +9,7 @@ import {
 import { Receipt, Appointment, ClinicSettings, Patient } from '@/portal/shared';
 import { Button } from '@/portal/components/ui/button';
 import { apiFetch } from '@/portal/lib/api/client';
+import { getReceiptDate, getPaymentDate, formatTransactionDate } from '@/portal/lib/transaction-dates';
 
 interface ReceiptDocumentProps {
   receipt: Receipt;
@@ -92,23 +93,26 @@ export function ReceiptDocument({
     }
   };
 
-  const formattedReceiptDate = receipt.createdAt
-    ? new Date(receipt.createdAt).toLocaleDateString('en-GB', {
+  const formattedReceiptDate = getReceiptDate(receipt)
+    ? new Date(getReceiptDate(receipt)).toLocaleDateString('en-GB', {
         day: '2-digit',
         month: 'short',
-        year: 'numeric'
+        year: 'numeric',
+        timeZone: 'Asia/Dhaka'
       })
     : new Date().toLocaleDateString('en-GB', {
         day: '2-digit',
         month: 'short',
-        year: 'numeric'
+        year: 'numeric',
+        timeZone: 'Asia/Dhaka'
       });
 
-  const formattedReceiptTime = receipt.createdAt
-    ? new Date(receipt.createdAt).toLocaleTimeString('en-US', {
+  const formattedReceiptTime = getReceiptDate(receipt)
+    ? new Date(getReceiptDate(receipt)).toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
-        hour12: true
+        hour12: true,
+        timeZone: 'Asia/Dhaka'
       })
     : '';
 
@@ -363,7 +367,7 @@ export function ReceiptDocument({
                 {activePayments.map((p, pIdx) => (
                   <div key={p.id || pIdx} className="flex justify-between items-center font-mono text-gray-700">
                     <span>
-                      {p.paymentDate || 'Paid'} • <span className="uppercase text-[7.5px] font-semibold">{p.paymentMethod || 'CASH'}</span>
+                      {formatTransactionDate(getPaymentDate(p))} • <span className="uppercase text-[7.5px] font-semibold">{p.paymentMethod || 'CASH'}</span>
                       {p.paymentTime && <span className="text-gray-500 text-[7px] ml-1">({p.paymentTime})</span>}
                     </span>
                     <span className="font-bold text-emerald-900">

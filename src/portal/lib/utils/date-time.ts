@@ -104,7 +104,7 @@ export function getAppointmentLifecycle(
   status?: string
 ): 'upcoming' | 'completed' | 'cancelled' | 'no-show' {
   if (status === 'cancelled') return 'cancelled';
-  if (status === 'no-show') return 'no-show';
+  if (status === 'no-show') return 'cancelled';
   if (status === 'completed') return 'completed';
-  return isAppointmentPast(dateStr, timeStr) ? 'completed' : 'upcoming';
+  return isAppointmentPast(dateStr, timeStr) ? 'cancelled' : 'upcoming';
 }

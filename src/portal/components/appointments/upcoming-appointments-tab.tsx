@@ -5,7 +5,7 @@ import Link from '@/portal/shims/next-link';
 import { Bell, CalendarDays, Clock3, Phone, X, AlertCircle, Clock } from 'lucide-react';
 import { Appointment } from '@/portal/shared';
 import { apiFetch } from '@/portal/lib/api/client';
-import { formatDhakaDisplayDate, getDhakaDateString, parseAppointmentDateTime } from '@/portal/lib/utils/date-time';
+import { formatDhakaDisplayDate, getDhakaDateString, parseAppointmentDateTime, getAppointmentLifecycle } from '@/portal/lib/utils/date-time';
 
 const REFRESH_MS = 60_000;
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -76,7 +76,7 @@ export function UpcomingAppointmentsTab() {
       const response = await apiFetch<Appointment[]>('/appointments?status=upcoming&includeRecentExpired=true');
       if (response.success && response.data) {
         const valid = response.data.filter((appointment) => {
-          if (appointment.status === 'cancelled') return false;
+          if (getAppointmentLifecycle(appointment.appointmentDate, appointment.appointmentTime, appointment.status) !== 'upcoming') return false;
           const info = getExpiryInfo(appointment, today);
 
           return !info.isExpiredOver24h;

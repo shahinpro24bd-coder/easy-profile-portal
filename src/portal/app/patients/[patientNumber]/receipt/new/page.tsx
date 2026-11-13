@@ -27,7 +27,8 @@ import { Button } from '@/portal/components/ui/button';
 import { Input } from '@/portal/components/ui/input';
 import { Modal } from '@/portal/components/ui/modal';
 import { DatePicker } from '@/portal/components/ui/date-picker';
-import { PaymentDateField, paymentDateToIso } from '@/portal/components/patient/payment-date-field';
+import { PaymentDateField } from '@/portal/components/patient/payment-date-field';
+import { transactionDateFields, getReceiptDate, clinicDay } from '@/portal/lib/transaction-dates';
 import { getDhakaDateString } from '@/portal/lib/utils/date-time';
 import { TimePicker } from '@/portal/components/ui/time-picker';
 import { ReceiptDocument } from '@/portal/components/receipt/receipt-document';
@@ -121,7 +122,7 @@ function ReceiptFormContent() {
             setDiscountType(rec.discountType || 'flat');
             setPaidAmount(String(rec.paidAmount || 0));
             setPaymentMethod(rec.paymentMethod || 'cash');
-            if (rec.createdAt) setBillDate(getDhakaDateString(new Date(rec.receiptDate || rec.createdAt)));
+            if (getReceiptDate(rec)) setBillDate(clinicDay(getReceiptDate(rec)));
             setNotes(rec.notes || '');
             if (rec.appointmentDate) setAppointmentDate(rec.appointmentDate);
             if (rec.appointmentTime) setAppointmentTime(rec.appointmentTime);
@@ -321,7 +322,7 @@ function ReceiptFormContent() {
       status: dueAmount === 0 && totalPayable > 0 ? 'paid' : paidNum > 0 ? 'partial' : 'pending',
       notes,
       version: editReceipt?.version || 1,
-      createdAt: paymentDateToIso(billDate) || editReceipt?.createdAt || new Date().toISOString(),
+      ...transactionDateFields(billDate),
       updatedAt: new Date().toISOString()
     };
   }, [editReceipt, isEditMode, previousDueSnapshot, patient, patientNumber, appointmentDate, appointmentTime, items, billTotal, subtotal, discountAmount, discountType, visitTotal, totalPayable, paidNum, dueAmount, paymentMethod, notes, billDate]);
@@ -374,9 +375,7 @@ function ReceiptFormContent() {
         appointmentDate: appointmentDate?.trim() || undefined,
         appointmentTime: appointmentTime?.trim() || undefined,
         notes: notes.trim() || undefined,
-        receiptDate: paymentDateToIso(billDate),
-        createdAt: paymentDateToIso(billDate),
-        paymentDate: paymentDateToIso(billDate),
+        ...transactionDateFields(billDate),
         isNewReceipt: !isEditMode
       };
 
@@ -395,11 +394,17 @@ function ReceiptFormContent() {
 
       if (res.success && res.data) {
         const receipt = res.data?.data || res.data;
-        setSavedReceipt(receipt);
-
+        const readback = await apiFetch<Receipt>(`/receipts/${receipt.receiptNumber}`);
+        const saved = readback.success && readback.data ? readback.data : receipt;
+        setSavedReceipt(saved);
         try {
           localStorage.removeItem(`luckydental_receipt_draft_${patientNumber}`);
         } catch {}
+        if (clinicDay(getReceiptDate(saved)) !== billDate || (!isEditMode && (saved.payments || []).some(p => clinicDay(p.paymentDate || p.paidAt || p.date || p.createdAt || '') !== billDate))) {
+          showToast('বিল সেভ হয়েছে, কিন্তু ক্লিনিকের সিস্টেমে বেছে নেওয়া তারিখ নিশ্চিত হয়নি। আবার বিল তৈরি করবেন না।', 'error');
+          setShowPrintModal(true);
+          return;
+        }
 
         const recNum = receipt.receiptNumber || receipt.id || '';
         showToast(
