@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMemo } from 'react';
-import { PatientFinder } from '@/portal/components/layout/patient-finder';
 import Link from '@/portal/shims/next-link';
 import { useRouter } from '@/portal/shims/next-navigation';
 import {
@@ -161,13 +160,6 @@ export default function PatientsPage() {
             </Button>
           </Link>
         </div>
-
-        <PatientFinder
-          className="max-w-md w-full"
-          inputClassName="text-sm"
-          placeholder="নামের ১-২ অক্ষর / ফোন / নম্বর লিখুন..."
-          onQueryChange={(v) => { setSearch(v); setPage(1); }}
-        />
 
         <GlassCard className="p-4 sm:p-5 space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
