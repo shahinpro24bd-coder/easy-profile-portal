@@ -20,3 +20,6 @@
 - Patient custom-field visibility and manual complaint merging use a shared browser-safe helper. Why: registration, profile and settings must apply the same field exclusions without deleting historical data.
 - New invoices accept a direct total, mapped to one generic item by a browser-safe helper for legacy API compatibility; existing itemized invoices retain their edit controls. Why: simplify new billing without losing historical line items or changing the clinic API.
 - The retired catalog URL redirects home. Why: preserve old bookmarks without exposing retired features.
+
+- Transaction dates use a shared browser-safe helper that sends clinic-day fields separately from timestamp aliases and prioritizes business dates in displays; read back writes and warn when the clinic ignores a date. Why: legacy endpoints may otherwise silently use the entry day.
+- Appointment lifecycle treats elapsed unconfirmed and no-show visits as cancelled, preserves explicit completion, and provides an all-date cancelled view refreshed each minute. Why: elapsed time alone is not proof of attendance.

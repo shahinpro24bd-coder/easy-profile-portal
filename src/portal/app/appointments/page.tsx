@@ -54,6 +54,8 @@ export default function AppointmentsPage() {
   const [selectedDate, setSelectedDate] = useState<string>(todayStr);
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [view, setView] = useState<'schedule' | 'cancelled'>('schedule');
+  const [clock, setClock] = useState(Date.now());
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -98,7 +100,7 @@ export default function AppointmentsPage() {
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
-      params.set('date', targetDate);
+      if (view === 'schedule') params.set('date', targetDate);
       if (filterCategory && filterCategory !== 'All') params.set('category', filterCategory);
 
       const res = await apiFetch<Appointment[]>(`/appointments?${params.toString()}`);
@@ -113,10 +115,14 @@ export default function AppointmentsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [filterCategory, showToast]);
+  }, [filterCategory, showToast, view]);
 
   useEffect(() => {
     fetchAppointments(selectedDate);
+    const interval = window.setInterval(() => { setClock(Date.now()); fetchAppointments(selectedDate); }, 60_000);
+    const refresh = () => { setClock(Date.now()); fetchAppointments(selectedDate); };
+    window.addEventListener('focus', refresh);
+    return () => { window.clearInterval(interval); window.removeEventListener('focus', refresh); };
   }, [selectedDate, fetchAppointments]);
 
   useEffect(() => {
@@ -135,6 +141,8 @@ export default function AppointmentsPage() {
       status: getAppointmentLifecycle(a.appointmentDate, a.appointmentTime, a.status)
     }));
 
+    list = list.filter(a => view === 'cancelled' ? a.status === 'cancelled' : a.status !== 'cancelled');
+
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       list = list.filter(
@@ -148,7 +156,7 @@ export default function AppointmentsPage() {
 
     list.sort((a: any, b: any) => (a.appointmentTime || '').localeCompare(b.appointmentTime || ''));
     return list;
-  }, [appointments, search]);
+  }, [appointments, search, view, clock]);
 
   const allAvailableCategories = useMemo(() => {
     const defaultCategories = [
@@ -385,6 +393,12 @@ export default function AppointmentsPage() {
     }
   };
 
+  const handleAttendance = async (id: string) => {
+    const res = await apiFetch(`/appointments/${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'completed' }) });
+    if (res.success) { showToast('রোগী এসেছেন হিসেবে সেভ হয়েছে।', 'success'); fetchAppointments(selectedDate); }
+    else showToast(res.error || 'সেভ হয়নি।', 'error');
+  };
+
   const handleDeleteAppointment = async (id: string) => {
     if (!confirm('Are you sure you want to remove this appointment?')) return;
     try {
@@ -445,7 +459,12 @@ export default function AppointmentsPage() {
           </div>
         </div>
 
-        <GlassCard className="p-3.5 relative z-30 border border-red-950/40 shadow-lg">
+        <div className="flex flex-wrap items-center gap-2" role="tablist" aria-label="Appointment sections">
+          <Button role="tab" aria-selected={view === 'schedule'} variant={view === 'schedule' ? 'primary' : 'outline'} onClick={() => setView('schedule')}>অ্যাপয়েন্টমেন্ট · Schedule</Button>
+          <Button role="tab" aria-selected={view === 'cancelled'} variant={view === 'cancelled' ? 'primary' : 'outline'} onClick={() => setView('cancelled')}>বাতিল অ্যাপয়েন্টমেন্ট · Cancelled</Button>
+        </div>
+
+        {view === 'schedule' && <GlassCard className="p-3.5 relative z-30 border border-red-950/40 shadow-lg">
           <div className="flex flex-col md:flex-row items-center justify-between gap-3.5">
 
             <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-start">
@@ -516,12 +535,12 @@ export default function AppointmentsPage() {
               </div>
             </div>
           </div>
-        </GlassCard>
+        </GlassCard>}
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs text-gray-400">
-            <span>Showing schedule for:</span>
-            <span className="font-bold text-gray-200">{formatDhakaDisplayDate(selectedDate)}</span>
+            <span>{view === 'cancelled' ? 'বাতিল অ্যাপয়েন্টমেন্ট · সব তারিখ' : 'Showing schedule for:'}</span>
+            <span className="font-bold text-gray-200">{view === 'schedule' ? formatDhakaDisplayDate(selectedDate) : ''}</span>
             <span className="font-mono text-red-400 font-bold">({counts.total} Total)</span>
           </div>
 
@@ -587,7 +606,7 @@ export default function AppointmentsPage() {
           <GlassCard className="p-12 text-center space-y-3">
             <CalendarIcon className="w-12 h-12 text-gray-600 mx-auto" />
             <h3 className="text-base font-bold text-gray-200">
-              No appointments scheduled for {formatDhakaDisplayDate(selectedDate)}
+              {view === 'cancelled' ? 'কোনো বাতিল অ্যাপয়েন্টমেন্ট নেই' : `No appointments scheduled for ${formatDhakaDisplayDate(selectedDate)}`}
             </h3>
             <p className="text-xs text-gray-400 max-w-sm mx-auto">
               There are no patient visits recorded for this day. You can book an appointment or browse other dates.
@@ -646,6 +665,7 @@ export default function AppointmentsPage() {
                               <span className="font-bold text-gray-100 text-sm font-mono">
                                 {apt.appointmentTime}
                               </span>
+                              {view === 'cancelled' && <span>{formatDhakaDisplayDate(apt.appointmentDate)}</span>}
                             </div>
                           </td>
 
@@ -687,7 +707,7 @@ export default function AppointmentsPage() {
                                   : 'bg-blue-950/80 text-blue-300 border border-blue-800/50'
                               }`}
                             >
-                              {apt.status === 'completed' ? 'Completed / Past' : apt.status}
+                              {apt.status === 'completed' ? 'Completed' : apt.status === 'cancelled' ? 'বাতিল · Cancelled' : apt.status}
                             </span>
                           </td>
 
@@ -734,6 +754,7 @@ export default function AppointmentsPage() {
 
                           <td className="py-4 px-5 text-right whitespace-nowrap">
                             <div className="inline-flex items-center gap-1">
+                              {apt.status !== 'completed' && <Button variant="ghost" size="sm" onClick={() => handleAttendance(aptId)} className="h-7 px-2 text-[11px] gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> এসেছেন · Completed</Button>}
                               <Button
                                 variant="ghost"
                                 size="sm"
